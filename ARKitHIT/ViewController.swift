@@ -567,7 +567,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let date = Date()
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss"// 2019-10-19 17:01:09
-        waves.append(wave(ltEye:x,rtEye:x,face:y,date:df.string(from:date)))
+        waves.append(wave(ltEye:x/1000,rtEye:x/1000,face:y,date:df.string(from:date)))
 
         if waves.count>60*60*2{//2min
             waves.remove(at: 0)
