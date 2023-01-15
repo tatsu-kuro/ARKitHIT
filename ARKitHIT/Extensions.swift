@@ -1,10 +1,6 @@
-//
+//  ARKitHIT 2022/01/15 by Tatsuaki Kuroda
 //  SCNVectorExtension.swift
-//  Face-based Game Prototype
-//
-//  Created by VIRAKRI JINANGKUL on 10/31/17.
-//  Copyright © 2017 VIRAKRI JINANGKUL. All rights reserved.
-//
+
 
 import SceneKit
 

@@ -1,6 +1,5 @@
 //
-//  AppDelegate.swift
-//  Eyes Tracking
+//  ARKitHIT 2022/01/15 by Tatsuaki Kuroda
 //
 //  Created by Virakri Jinangkul on 6/6/18.
 //  Copyright © 2018 virakri. All rights reserved.

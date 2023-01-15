@@ -1,11 +1,6 @@
-//
+//  ARKitHIT 2022/01/15 by Tatsuaki Kuroda
 //  ImagePickerViewController.swift
-//  Eyes Tracking
 //
-//  Created by 黒田建彰 on 2023/01/08.
-//  Copyright © 2023 virakri. All rights reserved.
-//
-
 
 import UIKit
 import Photos
