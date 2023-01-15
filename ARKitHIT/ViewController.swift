@@ -255,7 +255,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             update(withFaceAnchor: faceAnchor)
         }
     }
-    
+    func runSession() {
+        // sessionを開始
+        guard ARFaceTrackingConfiguration.isSupported else { return }
+        let configuration = ARFaceTrackingConfiguration()
+        configuration.isLightEstimationEnabled = true
+        // Run the view's session
+        sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+    }
+
+    func pauseSession() {
+        // sessionを停止
+        sceneView.session.pause()
+    }
     // MARK: - update(ARFaceAnchor)
     var currTime=CFAbsoluteTimeGetCurrent()
     
@@ -263,6 +275,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if arKitFlag==true{
             eyeRNode.simdTransform = anchor.rightEyeTransform
             eyeLNode.simdTransform = anchor.leftEyeTransform
+            
             //----------------
             let temp = SCNNode(geometry: nil)
             temp.simdTransform = anchor.leftEyeTransform
@@ -388,6 +401,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             waveSlider.maximumTrackTintColor=UIColor.blue
             getVHITWaves()
             drawVHITBox()
+            pauseSession()
             sceneView.isHidden=true
         }else{
             let configuration = ARFaceTrackingConfiguration()
@@ -399,6 +413,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             waveSlider.minimumTrackTintColor=UIColor.gray
             waveSlider.maximumTrackTintColor=UIColor.gray
+            runSession()
             sceneView.isHidden=false
         }
     }
@@ -535,33 +550,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var initFlag:Bool=true
     
     var timerCnt:Int=0
-    @objc func update(tm: Timer) {
-        if arKitFlag==false{
-            return
-        }
-        timerCnt += 1
-        if faceAnchorFlag==true{//} && faceAnchorFlag == lastFlag{
-            let date = Date()
-            let df = DateFormatter()
-            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            // 2019-10-19 17:01:09
-            
-            waves.append(wave(ltEye:ltEyeVeloX0,rtEye:ltEyeVeloX0,face:faceVeloX0,date:df.string(from:date)))
-            //            progressFaceView.setProgress(0.5 + Float(faceVeloX0)*10, animated: false)
-            //            progressEyeView.setProgress(0.5 + Float(ltEyeVeloX0)*10, animated: false)
-        }else{//検出できていない時はappendしない
-            //            progressFaceView.setProgress(0, animated: false)
-            //            progressEyeView.setProgress(0, animated: false)
-        }
-        if waves.count>60*60*2{//2min
-            waves.remove(at: 0)
-        }
-        drawWaveBox()
-        if timerCnt%60==0{
-            getVHITWaves()
-            drawVHITBox()
-        }
-    }
+//    @objc func update(tm: Timer) {
+//        if arKitFlag==false{
+//            return
+//        }
+//        timerCnt += 1
+//        if faceAnchorFlag==true{//} && faceAnchorFlag == lastFlag{
+//            let date = Date()
+//            let df = DateFormatter()
+//            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+//            // 2019-10-19 17:01:09
+//
+//            waves.append(wave(ltEye:ltEyeVeloX0,rtEye:ltEyeVeloX0,face:faceVeloX0,date:df.string(from:date)))
+//            //            progressFaceView.setProgress(0.5 + Float(faceVeloX0)*10, animated: false)
+//            //            progressEyeView.setProgress(0.5 + Float(ltEyeVeloX0)*10, animated: false)
+//        }else{//検出できていない時はappendしない
+//            //            progressFaceView.setProgress(0, animated: false)
+//            //            progressEyeView.setProgress(0, animated: false)
+//        }
+//        if waves.count>60*60*2{//2min
+//            waves.remove(at: 0)
+//        }
+//        drawWaveBox()
+//        if timerCnt%60==0{
+//            getVHITWaves()
+//            drawVHITBox()
+//        }
+//    }
     func updateData(x:CGFloat,y:CGFloat){
         timerCnt += 1
         let date = Date()
