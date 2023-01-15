@@ -270,41 +270,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     // MARK: - update(ARFaceAnchor)
     var currTime=CFAbsoluteTimeGetCurrent()
-    /*
-    func getQuaternion{
-        let face = simd_quatf(faceAnchor.transform)
-        let rEye = simd_quatf(faceAnchor.rightEyeTransform)
-        let lEye = simd_quatf(faceAnchor.leftEyeTransform)
-        let fYaw = atan2f(2.0 * (face.axis.y * face.axis.z + face.axis.x * face.angle),
-                          face.axis.x*face.axis.x + face.axis.y * face.axis.y - face.axis.z * face.axis.z - face.angle * face.angle)
-        let rYaw = atan2f(2.0 * (rEye.axis.y * rEye.axis.z + rEye.axis.x * rEye.angle),
-                          rEye.axis.x*rEye.axis.x + rEye.axis.y * rEye.axis.y - rEye.axis.z * rEye.axis.z - rEye.angle * rEye.angle)
-        let lYaw = atan2f(2.0 * (lEye.axis.y * lEye.axis.z + lEye.axis.x * lEye.angle),
-                          lEye.axis.x*lEye.axis.x + lEye.axis.y * lEye.axis.y - lEye.axis.z * lEye.axis.z - lEye.angle * lEye.angle)
-    }*/
-  /*  func getQuaternion{
-        let face = simd_quatf(faceAnchor.transform)
-        let rEye = simd_quatf(faceAnchor.rightEyeTransform)
-        let lEye = simd_quatf(faceAnchor.leftEyeTransform)
-        
-        let fRoll = atan2f(2.0 * (face.axis.z * face.angle + face.axis.x * face.axis.y),
-                           face.axis.x * face.axis.x - face.axis.y * face.axis.y - face.axis.z * face.axis.z + face.angle * face.angle)
-        let fPitch = asin(2.0 * (face.axis.x * face.axis.z - face.axis.y * face.angle))
-        let fYaw = atan2f(2.0 * (face.axis.y * face.axis.z + face.axis.x * face.angle),
-                          face.axis.x*face.axis.x + face.axis.y * face.axis.y - face.axis.z * face.axis.z - face.angle * face.angle)
-        
-        let rRoll = atan2f(2.0 * (rEye.axis.z * rEye.angle + rEye.axis.x * rEye.axis.y),
-                           rEye.axis.x * rEye.axis.x - rEye.axis.y * rEye.axis.y - rEye.axis.z * rEye.axis.z + rEye.angle * rEye.angle)
-        let rPitch = asin(2.0 * (rEye.axis.x * rEye.axis.z - rEye.axis.y * rEye.angle))
-        let rYaw = atan2f(2.0 * (rEye.axis.y * rEye.axis.z + rEye.axis.x * rEye.angle),
-                          rEye.axis.x*rEye.axis.x + rEye.axis.y * rEye.axis.y - rEye.axis.z * rEye.axis.z - rEye.angle * rEye.angle)
-        
-        let lRoll = atan2f(2.0 * (lEye.axis.z * lEye.angle + lEye.axis.x * lEye.axis.y),
-                           lEye.axis.x * lEye.axis.x - lEye.axis.y * lEye.axis.y - lEye.axis.z * lEye.axis.z + lEye.angle * lEye.angle)
-        let lPitch = asin(2.0 * (lEye.axis.x * lEye.axis.z - lEye.axis.y * lEye.angle))
-        let lYaw = atan2f(2.0 * (lEye.axis.y * lEye.axis.z + lEye.axis.x * lEye.angle),
-                          lEye.axis.x*lEye.axis.x + lEye.axis.y * lEye.axis.y - lEye.axis.z * lEye.axis.z - lEye.angle * lEye.angle)
-    }*/
     func update(withFaceAnchor anchor: ARFaceAnchor) {
         if arKitFlag==true{
             eyeRNode.simdTransform = anchor.rightEyeTransform
@@ -339,99 +304,75 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         }
     }
-    /*
-     func update(withFaceAnchor anchor: ARFaceAnchor) {
-         if arKitFlag==true{
-             let face = simd_quatf(anchor.transform)
-             let rEye = simd_quatf(anchor.rightEyeTransform)
-             let lEye = simd_quatf(anchor.leftEyeTransform)
-             let fYaw = atan2f(2.0 * (face.axis.y * face.axis.z + face.axis.x * face.angle),
-                               face.axis.x*face.axis.x + face.axis.y * face.axis.y - face.axis.z * face.axis.z - face.angle * face.angle)
-             let rYaw = atan2f(2.0 * (rEye.axis.y * rEye.axis.z + rEye.axis.x * rEye.angle),
-                               rEye.axis.x*rEye.axis.x + rEye.axis.y * rEye.axis.y - rEye.axis.z * rEye.axis.z - rEye.angle * rEye.angle)
-             let lYaw = atan2f(2.0 * (lEye.axis.y * lEye.axis.z + lEye.axis.x * lEye.angle),
-                               lEye.axis.x*lEye.axis.x + lEye.axis.y * lEye.axis.y - lEye.axis.z * lEye.axis.z - lEye.angle * lEye.angle)
-             let eYaw = (rYaw + lYaw)/2
-
-             eyeRNode.simdTransform = anchor.rightEyeTransform
-             eyeLNode.simdTransform = anchor.leftEyeTransform
-             faceNode.simdTransform = anchor.transform
-             //----------------
- //            let temp = SCNNode(geometry: nil)
- //            temp.simdTransform = anchor.leftEyeTransform
-             //ちゃんと1/60sec毎に通っている
-             //        print("leftEye:",CFAbsoluteTimeGetCurrent()-currTime,temp.rotation.x)// temp.rotation.y,temp.rotation.z)
-             //----------------------
-             var eyeLLookAt = CGPoint()
-             var eyeRLookAt = CGPoint()
-             let heightCompensation: CGFloat = 312
-             DispatchQueue.main.async {
-                 // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
-                 let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
-                 
-                 let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
-                 
-                 for result in phoneScreenEyeRHitTestResults {
-                     
-                     eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                     
-                     eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
-                 }
-                 
-                 for result in phoneScreenEyeLHitTestResults {
-                     
-                     eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                     
-                     eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
-                 }
-                 
-                 // Add the latest position and keep up to 8 recent position to smooth with.
-                 let smoothThresholdNumber: Int = 10
-                 self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
-                 self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
-                 self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
-                 self.eyeLookAtPositionYs = Array(self.eyeLookAtPositionYs.suffix(smoothThresholdNumber))
-                 
-                 let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
-                 let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
-                 
-                 // update indicator position
-                 //            self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
-                 
-                 // update eye look at labels values
-                 self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
-                 
-                 self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
-                 
-                 // Calculate distance of the eyes to the camera
-                 let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero
-                 let distanceR = self.eyeRNode.worldPosition - SCNVector3Zero
-                 
-                 // Average distance from two eyes
-                 let distance = (distanceL.length() + distanceR.length()) / 2
-                 
-                 // Update distance label value
-                 self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
-                 print("leftEye:",CFAbsoluteTimeGetCurrent()-self.currTime)
-                 self.updateData(x:smoothEyeLookAtPositionX,y:smoothEyeLookAtPositionY)
- //                self.timerCnt += 1
- //                let date = Date()
- //                let df = DateFormatter()
- //                df.dateFormat = "yyyy-MM-dd HH:mm:ss"// 2019-10-19 17:01:09
- //                self.waves.append(wave(ltEye:smoothEyeLookAtPositionX,rtEye:smoothEyeLookAtPositionX,face:smoothEyeLookAtPositionY,date:df.string(from:date)))
- //                if self.waves.count>60*60*2{//2min
- //                    self.waves.remove(at: 0)
- //                }
- //                self.drawWaveBox()
- //                if self.timerCnt%60==0{
- //                    self.getVHITWaves()
- //                    self.drawVHITBox()
- //                }
-             }
-         }
-     }
-     
-     */
+    
+    func update_o(withFaceAnchor anchor: ARFaceAnchor) {//original
+        if arKitFlag==true{
+            eyeRNode.simdTransform = anchor.rightEyeTransform
+            eyeLNode.simdTransform = anchor.leftEyeTransform
+            faceNode.simdTransform = anchor.transform
+            //----------------
+            //            let temp = SCNNode(geometry: nil)
+            //            temp.simdTransform = anchor.leftEyeTransform
+            //ちゃんと1/60sec毎に通っている
+            //        print("leftEye:",CFAbsoluteTimeGetCurrent()-currTime,temp.rotation.x)// temp.rotation.y,temp.rotation.z)
+            //----------------------
+            var eyeLLookAt = CGPoint()
+            var eyeRLookAt = CGPoint()
+            let heightCompensation: CGFloat = 312
+            DispatchQueue.main.async {
+                // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
+                let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
+                
+                let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
+                
+                for result in phoneScreenEyeRHitTestResults {
+                    
+                    eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
+                    
+                    eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
+                }
+                
+                for result in phoneScreenEyeLHitTestResults {
+                    
+                    eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
+                    
+                    eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
+                }
+                
+                // Add the latest position and keep up to 8 recent position to smooth with.
+                let smoothThresholdNumber: Int = 10
+                self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
+                self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
+                self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
+                self.eyeLookAtPositionYs = Array(self.eyeLookAtPositionYs.suffix(smoothThresholdNumber))
+                
+                let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
+                let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
+                
+                // update indicator position
+                //            self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
+                
+                // update eye look at labels values
+                self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
+                
+                self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
+                
+                // Calculate distance of the eyes to the camera
+                let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero
+                let distanceR = self.eyeRNode.worldPosition - SCNVector3Zero
+                
+                // Average distance from two eyes
+                let distance = (distanceL.length() + distanceR.length()) / 2
+                
+                // Update distance label value
+                self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
+                print("leftEye:",CFAbsoluteTimeGetCurrent()-self.currTime)
+                self.updateData(eye:smoothEyeLookAtPositionX,face:smoothEyeLookAtPositionY)
+            }
+        }
+    }
+    
+    
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if arKitFlag{
             virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
