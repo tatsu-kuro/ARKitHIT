@@ -161,6 +161,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         lookAtTargetEyeRNode.position.z = 2//無いと計算されない表示はされる
         setButtons()
         currTime=CFAbsoluteTimeGetCurrent()
+        arKitFlag=true
     }
     func setButtonProperty(_ button:UIButton,x:CGFloat,y:CGFloat,w:CGFloat,h:CGFloat,_ color:UIColor){
         button.frame   = CGRect(x:x, y:y, width: w, height: h)
@@ -240,102 +241,119 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     // MARK: - ARSCNViewDelegate
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        
-        faceNode.transform = node.transform
-        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-        
-        
-        //        let temp = SCNNode(geometry: nil)
-        //        temp.simdTransform = faceAnchor.leftEyeTransform
-        //        print(temp.rotation)
-        //
-        //
-        
-        
-        
-        update(withFaceAnchor: faceAnchor)
+        if arKitFlag==true{
+            faceNode.transform = node.transform
+            guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+            
+            
+            //        let temp = SCNNode(geometry: nil)
+            //        temp.simdTransform = faceAnchor.leftEyeTransform
+            //        print(temp.rotation)
+            //
+            //
+            
+            update(withFaceAnchor: faceAnchor)
+        }
     }
     
     // MARK: - update(ARFaceAnchor)
     var currTime=CFAbsoluteTimeGetCurrent()
     
     func update(withFaceAnchor anchor: ARFaceAnchor) {
-        
-        eyeRNode.simdTransform = anchor.rightEyeTransform
-        eyeLNode.simdTransform = anchor.leftEyeTransform
-        //----------------
-        let temp = SCNNode(geometry: nil)
-        temp.simdTransform = anchor.leftEyeTransform
-        //ちゃんと1/60sec毎に通っている
-        //        print("leftEye:",CFAbsoluteTimeGetCurrent()-currTime,temp.rotation.x)// temp.rotation.y,temp.rotation.z)
-        //----------------------
-        var eyeLLookAt = CGPoint()
-        var eyeRLookAt = CGPoint()
-        
-        let heightCompensation: CGFloat = 312
-        
-        DispatchQueue.main.async {
+        if arKitFlag==true{
+            eyeRNode.simdTransform = anchor.rightEyeTransform
+            eyeLNode.simdTransform = anchor.leftEyeTransform
+            //----------------
+            let temp = SCNNode(geometry: nil)
+            temp.simdTransform = anchor.leftEyeTransform
+            //ちゃんと1/60sec毎に通っている
+            //        print("leftEye:",CFAbsoluteTimeGetCurrent()-currTime,temp.rotation.x)// temp.rotation.y,temp.rotation.z)
+            //----------------------
+            var eyeLLookAt = CGPoint()
+            var eyeRLookAt = CGPoint()
             
-            // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
+            let heightCompensation: CGFloat = 312
             
-            let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
-            
-            let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
-            
-            for result in phoneScreenEyeRHitTestResults {
+            DispatchQueue.main.async {
                 
-                eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
+                // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
                 
-                eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
+                let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
+                
+                let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
+                
+                for result in phoneScreenEyeRHitTestResults {
+                    
+                    eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
+                    
+                    eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
+                }
+                
+                for result in phoneScreenEyeLHitTestResults {
+                    
+                    eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
+                    
+                    eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
+                }
+                
+                // Add the latest position and keep up to 8 recent position to smooth with.
+                let smoothThresholdNumber: Int = 10
+                self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
+                self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
+                self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
+                self.eyeLookAtPositionYs = Array(self.eyeLookAtPositionYs.suffix(smoothThresholdNumber))
+                
+                let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
+                let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
+                
+                // update indicator position
+                //            self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
+                
+                // update eye look at labels values
+                self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
+                
+                self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
+                
+                // Calculate distance of the eyes to the camera
+                let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero
+                let distanceR = self.eyeRNode.worldPosition - SCNVector3Zero
+                
+                // Average distance from two eyes
+                let distance = (distanceL.length() + distanceR.length()) / 2
+                
+                // Update distance label value
+                self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
+                print("leftEye:",CFAbsoluteTimeGetCurrent()-self.currTime)
+                self.updateData(x:smoothEyeLookAtPositionX,y:smoothEyeLookAtPositionY)
+//                self.timerCnt += 1
+//                let date = Date()
+//                let df = DateFormatter()
+//                df.dateFormat = "yyyy-MM-dd HH:mm:ss"// 2019-10-19 17:01:09
+//                self.waves.append(wave(ltEye:smoothEyeLookAtPositionX,rtEye:smoothEyeLookAtPositionX,face:smoothEyeLookAtPositionY,date:df.string(from:date)))
+//                if self.waves.count>60*60*2{//2min
+//                    self.waves.remove(at: 0)
+//                }
+//                self.drawWaveBox()
+//                if self.timerCnt%60==0{
+//                    self.getVHITWaves()
+//                    self.drawVHITBox()
+//                }
             }
-            
-            for result in phoneScreenEyeLHitTestResults {
-                
-                eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                
-                eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
-            }
-            
-            // Add the latest position and keep up to 8 recent position to smooth with.
-            let smoothThresholdNumber: Int = 10
-            self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
-            self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
-            self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
-            self.eyeLookAtPositionYs = Array(self.eyeLookAtPositionYs.suffix(smoothThresholdNumber))
-            
-            let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
-            let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
-            
-            // update indicator position
-            //            self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
-            
-            // update eye look at labels values
-            self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
-            
-            self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
-            
-            // Calculate distance of the eyes to the camera
-            let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero
-            let distanceR = self.eyeRNode.worldPosition - SCNVector3Zero
-            
-            // Average distance from two eyes
-            let distance = (distanceL.length() + distanceR.length()) / 2
-            
-            // Update distance label value
-            self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
-            //            print("leftEye:",CFAbsoluteTimeGetCurrent()-self.currTime)
         }
-        
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
+        if arKitFlag{
+            virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
+        }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        faceNode.transform = node.transform
-        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-        update(withFaceAnchor: faceAnchor)
+        if arKitFlag{
+            faceNode.transform = node.transform
+            guard let faceAnchor = anchor as? ARFaceAnchor else { return }
+            update(withFaceAnchor: faceAnchor)
+        }
     }
     
     var initDrawBoxF:Bool=true
@@ -360,17 +378,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     @IBAction func onARStartButton(_ sender: Any) {
         getVHITWaves()
-        if arKitFlag==true{//} && waves.count>60{
+        if arKitFlag==true && waves.count>60{
             //            session.pause()
             arKitFlag=false
             setWaveSlider()
             ARStartButton.setImage(  UIImage(systemName:"play.circle"), for: .normal)
-            
             waveSlider.isEnabled=true
             waveSlider.minimumTrackTintColor=UIColor.blue
             waveSlider.maximumTrackTintColor=UIColor.blue
             getVHITWaves()
             drawVHITBox()
+            sceneView.isHidden=true
         }else{
             let configuration = ARFaceTrackingConfiguration()
             configuration.isLightEstimationEnabled = true
@@ -381,6 +399,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             waveSlider.minimumTrackTintColor=UIColor.gray
             waveSlider.maximumTrackTintColor=UIColor.gray
+            sceneView.isHidden=false
         }
     }
     func setWaveSlider(){
@@ -534,6 +553,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             //            progressFaceView.setProgress(0, animated: false)
             //            progressEyeView.setProgress(0, animated: false)
         }
+        if waves.count>60*60*2{//2min
+            waves.remove(at: 0)
+        }
+        drawWaveBox()
+        if timerCnt%60==0{
+            getVHITWaves()
+            drawVHITBox()
+        }
+    }
+    func updateData(x:CGFloat,y:CGFloat){
+        timerCnt += 1
+        let date = Date()
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd HH:mm:ss"// 2019-10-19 17:01:09
+        waves.append(wave(ltEye:x,rtEye:x,face:y,date:df.string(from:date)))
+
         if waves.count>60*60*2{//2min
             waves.remove(at: 0)
         }

@@ -12,7 +12,7 @@
         <!--Settei View Controller-->
         <scene sceneID="Xky-Hs-d9t">
             <objects>
-                <viewController modalPresentationStyle="fullScreen" id="mCY-ts-XwF" customClass="SetteiViewController" customModule="Eyes_Tracking" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="fullScreen" id="mCY-ts-XwF" customClass="SetteiViewController" customModule="ARKitHIT" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Pbb-mt-rgK">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -107,7 +107,7 @@
         <!--How2 View Controller-->
         <scene sceneID="sRX-LP-vvl">
             <objects>
-                <viewController modalPresentationStyle="fullScreen" id="CNH-bJ-90z" customClass="How2ViewController" customModule="Eyes_Tracking" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="fullScreen" id="CNH-bJ-90z" customClass="How2ViewController" customModule="ARKitHIT" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="IEn-Lo-D6Q">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -147,7 +147,7 @@
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="Eyes_Tracking" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="ARKitHIT" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="75x-hB-b3v">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -209,7 +209,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="play.circle" catalog="system" title=""/>
+                                <buttonConfiguration key="configuration" style="plain" image="stop.circle" catalog="system" title=""/>
                                 <connections>
                                     <action selector="onARStartButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="sLT-n7-Iag"/>
                                 </connections>
@@ -282,7 +282,7 @@
         <!--Image Picker View Controller-->
         <scene sceneID="ly6-BJ-wl1">
             <objects>
-                <viewController modalPresentationStyle="fullScreen" id="mVN-UI-2Dh" customClass="ImagePickerViewController" customModule="Eyes_Tracking" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="fullScreen" id="mVN-UI-2Dh" customClass="ImagePickerViewController" customModule="ARKitHIT" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1Ka-Wy-TRd">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -332,8 +332,8 @@
         <image name="list.bullet.circle" catalog="system" width="128" height="123"/>
         <image name="multiply.circle" catalog="system" width="128" height="123"/>
         <image name="paperplane.circle" catalog="system" width="128" height="123"/>
-        <image name="play.circle" catalog="system" width="128" height="123"/>
         <image name="questionmark.circle" catalog="system" width="128" height="123"/>
+        <image name="stop.circle" catalog="system" width="128" height="123"/>
         <image name="trash.circle" catalog="system" width="128" height="123"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
