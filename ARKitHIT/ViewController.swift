@@ -210,7 +210,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         //        progressFaceView.frame=CGRect(x:20,y:(top+vHITBoxView.frame.minY)/2-10,width: ww-40,height: 20)
         //        progressEyeView.frame=CGRect(x:20,y:(top+vHITBoxView.frame.minY)/2+10,width: ww-40,height: 20)
-        let helpString = "iPhoneを被験者の眼前25cmに置き、そのカメラ部分を注視させた状態で，頭部を受動的かつ急速に 10°~20°回旋させる。その時、半規管機能が正常であれば，前庭眼反射(VOR:VestibularOcularReflex)が働き視標を注視できる。機能が低下していると，十分な VOR が働かず眼位と視標にズレが生じる。これを補正して視標を捉えるために急速眼球運動が生じるが，これをCUS(Catch Up Saccade)と呼ぶ。iPhoneのカメラで眼球運動を観察し、このCUSの有無を判別する。右耳を後方へ回転させた時にCUSがあれば、右外側半規管機能低下と判断できる."
+        let helpString = "iPhoneを被験者の眼前25cmに置き、そのカメラ部分を注視させた状態で，被験者の頭部を急速に 10°~20°回旋させる時、半規管機能が正常であれば，前庭眼反射(VOR:VestibularOcularReflex)が働き視標を注視できる。機能が低下していると，十分な VOR が働かず眼位と視標にズレが生じ、それを補正するために急速眼球運動が生じる。これをCUS(Catch Up Saccade)と呼ぶ。iPhoneのカメラで眼球運動を観察し、このCUSの有無を判別する。右耳を後方へ回転させた時にCUSがあれば、右外側半規管機能低下と判断できる."
     }
     
     override func viewWillAppear(_ animated: Bool) {

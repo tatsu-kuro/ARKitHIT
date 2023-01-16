@@ -74,6 +74,7 @@ class How2ViewController: UIViewController {
         scrollView.contentSize = CGSize(width: ww, height: ww*imgH/imgW)
         // スクロールの跳ね返り無し
         scrollView.bounces = true
+        let helpString = "iPhoneを被験者の眼前25cmに置き、そのカメラ部分を注視させた状態で，被験者の頭部を急速に 10°~20°回旋させる時、半規管機能が正常であれば，前庭眼反射(VOR:VestibularOcularReflex)が働き視標を注視できる。機能が低下していると，十分な VOR が働かず眼位と視標にズレが生じ、それを補正するために急速眼球運動が生じる。これをCUS(Catch Up Saccade)と呼ぶ。iPhoneのカメラで眼球運動を観察し、このCUSの有無を判別する。右耳を後方へ回転させた時にCUSがあれば、右外側半規管機能低下と判断できる."
     }
     
     override var prefersStatusBarHidden: Bool {
