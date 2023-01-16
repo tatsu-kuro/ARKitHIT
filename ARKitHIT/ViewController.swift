@@ -224,7 +224,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     @IBAction func unwind(_ segue: UIStoryboardSegue) {
         if let vc = segue.source as? SetteiViewController{
-            let Controller:SetteiViewController = vc
+//            let Controller:SetteiViewController = vc
             multiEye=CGFloat(getUserDefault(str:"multiEye" , ret:100))
             multiFace=CGFloat(getUserDefault(str:"multiFace" , ret:100))
         }
