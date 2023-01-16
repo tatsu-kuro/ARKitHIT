@@ -134,7 +134,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.lightContent
     }
-    
+    func getUserDefault(str:String,ret:Int) -> Int{//getUserDefault_one
+        if (UserDefaults.standard.object(forKey: str) != nil){//keyが設定してなければretをセット
+            return UserDefaults.standard.integer(forKey:str)
+        }else{
+            UserDefaults.standard.set(ret, forKey: str)
+            return ret
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         // Setup Design Elements
@@ -143,6 +150,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         //        sceneView.layer.cornerRadius = 28
         
         // Set the view's delegate
+        multiEye=CGFloat(getUserDefault(str:"multiEye" , ret:100))
+        multiFace=CGFloat(getUserDefault(str:"multiFace" , ret:100))
+
         sceneView.delegate = self
         //        sceneView.session.delegate = self//無くてもok?
         //        sceneView.automaticallyUpdatesLighting = true//無くてもok?
@@ -170,13 +180,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         button.layer.cornerRadius = 5
         button.backgroundColor = color
     }
-//    func setButtonProperty(_ button:UIButton,x:CGFloat,y:CGFloat,w:CGFloat,h:CGFloat,_ color:UIColor,_ borderWidth:CGFloat){
-//        button.frame   = CGRect(x:x, y:y, width: w, height: h)
-//        button.layer.borderColor = UIColor.black.cgColor
-//        button.layer.borderWidth = borderWidth
-//        button.layer.cornerRadius = 5
-//        button.backgroundColor = color
-//    }
+
     func setButtons(){
         
         let ww=view.bounds.width
@@ -196,21 +200,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         setButtonProperty(saveButton,x:sp*3.5+bw*1.5,y:by1,w:bw,h:bh,UIColor.white)
         setButtonProperty(waveClearButton,x:sp*4.5+bw*2.5,y:by1,w:bw,h: bh,UIColor.white)
         setButtonProperty(ARStartButton,x:sp*5.5+bw*3.5,y:by1,w:bw,h: bh,UIColor.white)
-        //        setButtonProperty(setteiButton, x: sp*2, y: by1, w: bw*3+sp*2, h: bh, UIColor.white,1)
-        //        setButtonProperty(how2Button,x:sp*5+bw*3,y:by1,w:bw,h:bh,UIColor.white,1)
-        setButtonProperty(setteiButton,x:sp*6.5+bw*4.5,y:by1,w:bw,h: bh,UIColor.white)
+         setButtonProperty(setteiButton,x:sp*6.5+bw*4.5,y:by1,w:bw,h: bh,UIColor.white)
         setButtonProperty(how2Button,x:sp*7.5+bw*5.5,y:by1,w:bw,h: bh,UIColor.white)
-        //        setButtonProperty(dataTypeButton,x:sp*8+bw*6,y:by0,w:bw,h: bh,UIColor.white)
-        waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
+         waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
         vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
         sceneView.frame=CGRect(x:view.bounds.width/3,y:vHITBoxView.frame.minY-sp-view.bounds.width/4,width: view.bounds.width/3,height: view.bounds.width/4)
         waveSlider.frame=CGRect(x:sp*2,y:by2,width: ww-sp*4,height:20)//とりあえず
         let sliderHeight=waveSlider.frame.height
         waveSlider.frame=CGRect(x:sp*2,y:(waveBoxView.frame.maxY+by1)/2-sliderHeight/2,width:ww-sp*4,height:sliderHeight)
-        
-        //        progressFaceView.frame=CGRect(x:20,y:(top+vHITBoxView.frame.minY)/2-10,width: ww-40,height: 20)
-        //        progressEyeView.frame=CGRect(x:20,y:(top+vHITBoxView.frame.minY)/2+10,width: ww-40,height: 20)
-        let helpString = "iPhoneを被験者の眼前25cmに置き、そのカメラ部分を注視させた状態で，被験者の頭部を急速に 10°~20°回旋させる時、半規管機能が正常であれば，前庭眼反射(VOR:VestibularOcularReflex)が働き視標を注視できる。機能が低下していると，十分な VOR が働かず眼位と視標にズレが生じ、それを補正するために急速眼球運動が生じる。これをCUS(Catch Up Saccade)と呼ぶ。iPhoneのカメラで眼球運動を観察し、このCUSの有無を判別する。右耳を後方へ回転させた時にCUSがあれば、右外側半規管機能低下と判断できる."
+    
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -227,9 +225,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBAction func unwind(_ segue: UIStoryboardSegue) {
         if let vc = segue.source as? SetteiViewController{
             let Controller:SetteiViewController = vc
-            let ttt=Controller.multiEye.text
-            let yyy=Controller.multiFace.text
-            print("Settei******:",ttt,yyy)
+            multiEye=CGFloat(getUserDefault(str:"multiEye" , ret:100))
+            multiFace=CGFloat(getUserDefault(str:"multiFace" , ret:100))
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -245,13 +242,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if arKitFlag==true{
             faceNode.transform = node.transform
             guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-            
-            
-            //        let temp = SCNNode(geometry: nil)
-            //        temp.simdTransform = faceAnchor.leftEyeTransform
-            //        print(temp.rotation)
-            //
-            //
             
             update(withFaceAnchor: faceAnchor)
         }
@@ -305,8 +295,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         }
     }
-    
-    func update_o(withFaceAnchor anchor: ARFaceAnchor) {//original
+ /*
+    func update(withFaceAnchor anchor: ARFaceAnchor) {//original
         if arKitFlag==true{
             eyeRNode.simdTransform = anchor.rightEyeTransform
             eyeLNode.simdTransform = anchor.leftEyeTransform
@@ -372,7 +362,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         }
     }
-    
+ */
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if arKitFlag{
@@ -443,6 +433,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         waveSlider.addTarget(self, action: #selector(onWaveSliderValueChange), for: UIControl.Event.valueChanged)
     }
     func drawWave(startCnt:Int,endCnt:Int) -> UIImage {
+        print("multiEye:",multiFace)
         let size = CGSize(width:view.bounds.width, height:view.bounds.width*18/32)
         UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
         // 折れ線にする点の配列
@@ -543,7 +534,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var startMultiEye:CGFloat=0
     var startCnt:Int=0
     @objc func onWaveSliderValueChange(){
-        print("multi:",multiEye,multiFace)
+//        print("multi:",multiEye,multiFace)
         if waves.count<60{
             return
         }
@@ -569,33 +560,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var initFlag:Bool=true
     
     var timerCnt:Int=0
-//    @objc func update(tm: Timer) {
-//        if arKitFlag==false{
-//            return
-//        }
-//        timerCnt += 1
-//        if faceAnchorFlag==true{//} && faceAnchorFlag == lastFlag{
-//            let date = Date()
-//            let df = DateFormatter()
-//            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
-//            // 2019-10-19 17:01:09
-//
-//            waves.append(wave(ltEye:ltEyeVeloX0,rtEye:ltEyeVeloX0,face:faceVeloX0,date:df.string(from:date)))
-//            //            progressFaceView.setProgress(0.5 + Float(faceVeloX0)*10, animated: false)
-//            //            progressEyeView.setProgress(0.5 + Float(ltEyeVeloX0)*10, animated: false)
-//        }else{//検出できていない時はappendしない
-//            //            progressFaceView.setProgress(0, animated: false)
-//            //            progressEyeView.setProgress(0, animated: false)
-//        }
-//        if waves.count>60*60*2{//2min
-//            waves.remove(at: 0)
-//        }
-//        drawWaveBox()
-//        if timerCnt%60==0{
-//            getVHITWaves()
-//            drawVHITBox()
-//        }
-//    }
+
     func updateData(eye:CGFloat,face:CGFloat){
         timerCnt += 1
         let date = Date()
