@@ -153,14 +153,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zjQ-Le-hMK">
-                                <rect key="frame" x="159" y="47" width="56" height="24.666666666666668"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="21"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5nW-i0-8sr">
-                                <rect key="frame" x="263" y="47" width="56" height="24.666666666666668"/>
+                                <rect key="frame" x="16" y="53" width="56" height="24.666666666666668"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="21"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -171,7 +164,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </arscnView>
                             <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999998807907104" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="luK-2a-LAg">
-                                <rect key="frame" x="0.0" y="51" width="80" height="33"/>
+                                <rect key="frame" x="20" y="73" width="80" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -246,6 +239,29 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gch-F0-TQg">
+                                <rect key="frame" x="296" y="247" width="50" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="forward.circle" catalog="system"/>
+                                <connections>
+                                    <action selector="onTypeButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="sXe-8I-h4q"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xj9-v4-bos">
+                                <rect key="frame" x="16" y="254" width="42" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5nW-i0-8sr">
+                                <rect key="frame" x="16" y="40" width="56" height="24.666666666666668"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="21"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="9i0-fu-tQr"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -257,6 +273,7 @@
                     </view>
                     <connections>
                         <outlet property="ARStartButton" destination="H03-Iz-5fe" id="55z-ei-iDI"/>
+                        <outlet property="dataTypeLabel" destination="xj9-v4-bos" id="lUj-DM-ahQ"/>
                         <outlet property="distanceLabel" destination="luK-2a-LAg" id="Uao-cT-Xam"/>
                         <outlet property="how2Button" destination="wer-Wb-K4X" id="aRy-Vo-hMx"/>
                         <outlet property="listButton" destination="2en-RU-uBe" id="uRf-mb-BrZ"/>
@@ -265,6 +282,7 @@
                         <outlet property="saveButton" destination="K2p-lS-AAc" id="aND-8y-8jY"/>
                         <outlet property="sceneView" destination="W9c-Gg-veJ" id="MwD-uf-Osc"/>
                         <outlet property="setteiButton" destination="urJ-Ew-ZdZ" id="Kq7-rG-sre"/>
+                        <outlet property="typeButton" destination="gch-F0-TQg" id="r9x-g8-CRl"/>
                         <outlet property="vHITBoxView" destination="hpe-tT-0gl" id="BDT-fW-mXY"/>
                         <outlet property="waveBoxView" destination="c28-tS-eLB" id="ciJ-71-Ji0"/>
                         <outlet property="waveClearButton" destination="pKv-rr-tgP" id="7mb-hT-Pca"/>
@@ -334,6 +352,7 @@
     <resources>
         <image name="arrow.uturn.backward.circle" catalog="system" width="128" height="123"/>
         <image name="folder.circle" catalog="system" width="128" height="123"/>
+        <image name="forward.circle" catalog="system" width="128" height="123"/>
         <image name="gearshape.circle" catalog="system" width="128" height="123"/>
         <image name="list.bullet.circle" catalog="system" width="128" height="123"/>
         <image name="multiply.circle" catalog="system" width="128" height="123"/>

@@ -23,6 +23,7 @@ extension UIImage {
 }
 @available(iOS 13.0, *)
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
+    @IBOutlet weak var typeButton: UIButton!
     @IBOutlet weak var listButton: UIButton!
     @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var waveClearButton: UIButton!
@@ -39,11 +40,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var waveSlider: UISlider!
     var defaultAlbumName:String = "ARvHIT"
     
+    @IBOutlet weak var dataTypeLabel: UILabel!
     var multiEye:CGFloat=100
     var multiFace:CGFloat=100
     var arKitDisplayMode:Bool=true
     var faceAnchorFlag:Bool=false
-    
+     var dataType:Int=0
+    @IBAction func onTypeButton(_ sender: Any) {
+        dataType += 1
+        if dataType>2{
+            dataType=0
+        }
+        if dataType==0{
+            dataTypeLabel.text="red:eyeRoll, black:faceRoll"
+        }else if dataType==1{
+            dataTypeLabel.text="red:eyePitch, black:facePitch"
+        }else{//} dataType>=2{
+            dataTypeLabel.text="red:eyeYaw, black:faceYaw"
+        }
+    }
     struct vHIT {
         var isRight : Bool
         var frameN : Int
@@ -144,6 +159,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        onTypeButton(0)
         // Setup Design Elements
         //        eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
         
@@ -205,6 +221,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
          waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
         vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
         sceneView.frame=CGRect(x:view.bounds.width/3,y:vHITBoxView.frame.minY-sp-view.bounds.width/4,width: view.bounds.width/3,height: view.bounds.width/4)
+        let y0=vHITBoxView.frame.maxY
+        let y1=waveBoxView.frame.minY
+        
+//        setButtonProperty(typeButton, x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, w: bw, h: bh, UIColor.white)
+        typeButton.frame=CGRect(x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, width: bw, height: bh)
+        dataTypeLabel.frame=CGRect(x:sp*2.5+bw*0.5,y:y0+(y1-y0-bh)/2,width:400,height:bh)
+ 
         waveSlider.frame=CGRect(x:sp*2,y:by2,width: ww-sp*4,height:20)//とりあえず
         let sliderHeight=waveSlider.frame.height
         waveSlider.frame=CGRect(x:sp*2,y:(waveBoxView.frame.maxY+by1)/2-sliderHeight/2,width:ww-sp*4,height:sliderHeight)
@@ -291,7 +314,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 let eRoll = (rRoll + lRoll)/2
                 let ePitch = (rPitch + lPitch)/2
                 let eYaw = (rYaw + lYaw)/2
-                self.updateData(eye:CGFloat(fRoll),face:CGFloat(fYaw))
+                if self.dataType==0{
+                    self.updateData(eye:CGFloat(eRoll),face:CGFloat(fRoll))
+                }else if self.dataType==1{
+                    self.updateData(eye:CGFloat(ePitch),face:CGFloat(fPitch))
+                }else if self.dataType>=2{
+                    self.updateData(eye:CGFloat(eYaw),face:CGFloat(fYaw))
+//                }else if self.dataType==3{
+//                    self.updateData(eye:CGFloat(eRoll),face:CGFloat(eYaw))
+//                }else if self.dataType==4{
+//                    self.updateData(eye:CGFloat(eRoll),face:CGFloat(eYaw))
+//                }else if self.dataType>4{
+//                    self.updateData(eye:CGFloat(eRoll),face:CGFloat(eYaw))
+               }
             }
         }
     }
@@ -431,7 +466,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         waveSlider.addTarget(self, action: #selector(onWaveSliderValueChange), for: UIControl.Event.valueChanged)
     }
     func drawWave(startCnt:Int,endCnt:Int) -> UIImage {
-        print("multiEye:",multiFace)
+//        print("multiEye:",multiFace)
         let size = CGSize(width:view.bounds.width, height:view.bounds.width*18/32)
         UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
         // 折れ線にする点の配列
@@ -1080,18 +1115,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                  let configuration = ARFaceTrackingConfiguration()
                  configuration.isLightEstimationEnabled = true
                  session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-     }
-     var lastTime=CFAbsoluteTimeGetCurrent()
- 
- 
-     var dataType:Int=0
-
-     @IBAction func onDataTypeButton(_ sender: Any) {
-         dataType += 1
-         if dataType>1{
-             dataType=0
-         }
-         dataTypeButton.setTitle(dataType.description, for: .normal)
      }
      */
 
