@@ -401,7 +401,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBAction func onARStartButton(_ sender: Any) {
         getVHITWaves()
         if arKitFlag==true && waves.count>60{
-            //            session.pause()
             arKitFlag=false
             setWaveSlider()
             ARStartButton.setImage(  UIImage(systemName:"play.circle"), for: .normal)
@@ -415,17 +414,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }else{
             let configuration = ARFaceTrackingConfiguration()
             configuration.isLightEstimationEnabled = true
-            //            session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
             arKitFlag=true
             waveSlider.isEnabled=false
             ARStartButton.setImage(  UIImage(systemName:"stop.circle"), for: .normal)
-            
             waveSlider.minimumTrackTintColor=UIColor.gray
             waveSlider.maximumTrackTintColor=UIColor.gray
             runSession()
             sceneView.isHidden=false
         }
     }
+   
     func setWaveSlider(){
         waveSlider.minimumValue = 60
         waveSlider.maximumValue = Float(waves.count)
@@ -981,9 +979,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         if arKitFlag==false{
             let loc=sender.location(in: view)
-            if loc.y < vHITBoxView.frame.maxY{
+            if loc.y < vHITBoxView.frame.maxY && loc.y > vHITBoxView.frame.minY{
                 UserDefaults.standard.set(!arKitDisplayMode,forKey: "arKitDisplayMode")
                 arKitDisplayMode = getUserDefaultBool(str: "arKitDisplayMode", ret:true)
+                
                 drawVHITBox()
             }else{
                 setDispONToggle()
@@ -992,6 +991,78 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
+    @IBAction func panGesture(_ sender: UIPanGestureRecognizer) {
+        if arKitFlag==true{
+            return
+        }
+        let move:CGPoint = sender.translation(in: self.view)
+        if sender.state == .began {
+            moveThumX=0
+            moveThumY=0
+            if sender.location(in: view).y>waveBoxView.frame.minY{//} view.bounds.height*2/5{
+                if sender.location(in: view).x<view.bounds.width/3{
+                    tapPosleftRight=0
+                    print("left")
+                }else if sender.location(in: view).x<view.bounds.width*2/3{
+                    tapPosleftRight=1
+                }else{
+                    tapPosleftRight=2
+                    print("right")
+                }
+                startMultiEye=multiEye
+                startMultiFace=multiFace
+                startCnt=Int(waveSlider.value)
+            }
+        } else if sender.state == .changed {
+            if sender.location(in: view).y>waveBoxView.frame.minY{//} bounds.height*2/5{
+                
+                moveThumX += move.x*move.x
+                moveThumY += move.y*move.y
+                
+                moveThumX += move.x*move.x
+                moveThumY += move.y*move.y
+                if moveThumX>moveThumY{//横移動の和＞縦移動の和
+                    //                    var endCnt=Int(waveSlider.value)
+                    var endCnt=startCnt + Int(move.x/10)
+                    if endCnt>waves.count-1{
+                        endCnt=waves.count-1
+                    }else if endCnt<60{
+                        endCnt=60
+                    }
+                    //                    print("x:",move.x)
+                    waveSlider.value=Float(endCnt)
+                }else{
+                    if tapPosleftRight==0{
+                        multiEye=startMultiEye - move.y
+                    }else if tapPosleftRight==1{
+                        multiFace=startMultiFace - move.y
+                        multiEye=startMultiEye - move.y
+                    }else{
+                        multiFace=startMultiFace - move.y
+                    }
+                    
+                    if multiFace>4000{
+                        multiFace=4000
+                    }else if multiFace<10{
+                        multiFace=10
+                    }
+                    
+                    if multiEye>4000{
+                        multiEye=4000
+                    }else if multiEye<10{
+                        multiEye=10
+                    }
+                }
+                onWaveSliderValueChange()
+            }
+            
+        }else if sender.state == .ended{
+            UserDefaults.standard.set(multiFace, forKey: "multiFace")
+            UserDefaults.standard.set(multiEye, forKey: "multiEye")
+        }
+        //        print("multiEye:",multiEye,multiFace)
+ 
+    }
 }
     /*
   
@@ -1011,105 +1082,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                  session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
      }
      var lastTime=CFAbsoluteTimeGetCurrent()
-     
-     @IBAction func panGesture(_ sender: UIPanGestureRecognizer) {
-         if arKitFlag==true{
-             return
-         }
-         let move:CGPoint = sender.translation(in: self.view)
-         if sender.state == .began {
-             moveThumX=0
-             moveThumY=0
-             if sender.location(in: view).y>view.bounds.height*2/5{
-                 if sender.location(in: view).x<view.bounds.width/3{
-                     tapPosleftRight=0
-                     print("left")
-                 }else if sender.location(in: view).x<view.bounds.width*2/3{
-                     tapPosleftRight=1
-                 }else{
-                     tapPosleftRight=2
-                     print("right")
-                 }
-                 startMultiEye=multiEye
-                 startMultiFace=multiFace
-                 startCnt=Int(waveSlider.value)
-             }
-         } else if sender.state == .changed {
-             if sender.location(in: view).y>view.bounds.height*2/5{
-                 
-                 moveThumX += move.x*move.x
-                 moveThumY += move.y*move.y
-                 
-                 moveThumX += move.x*move.x
-                 moveThumY += move.y*move.y
-                 if moveThumX>moveThumY{//横移動の和＞縦移動の和
-                     //                    var endCnt=Int(waveSlider.value)
-                     var endCnt=startCnt + Int(move.x/10)
-                     if endCnt>waves.count-1{
-                         endCnt=waves.count-1
-                     }else if endCnt<60{
-                         endCnt=60
-                     }
-                     //                    print("x:",move.x)
-                     waveSlider.value=Float(endCnt)
-                 }else{
-                     if tapPosleftRight==0{
-                         multiEye=startMultiEye - move.y
-                     }else if tapPosleftRight==1{
-                         multiFace=startMultiFace - move.y
-                         multiEye=startMultiEye - move.y
-                     }else{
-                         multiFace=startMultiFace - move.y
-                     }
-                     
-                     if multiFace>4000{
-                         multiFace=4000
-                     }else if multiFace<10{
-                         multiFace=10
-                     }
-                     
-                     if multiEye>4000{
-                         multiEye=4000
-                     }else if multiEye<10{
-                         multiEye=10
-                     }
-                 }
-                 onWaveSliderValueChange()
-             }
-             
-         }else if sender.state == .ended{
-             UserDefaults.standard.set(multiFace, forKey: "multiFace")
-             UserDefaults.standard.set(multiEye, forKey: "multiEye")
-         }
-         //        print("multiEye:",multiEye,multiFace)
-     }
-   
  
-     @IBAction func onARKitButton(_ sender: Any) {
-         getVHITWaves()
-         if arKitFlag==true && waves.count>60{
-             session.pause()
-             arKitFlag=false
-             setWaveSlider()
-             ARKitButton.setImage(  UIImage(systemName:"play.circle"), for: .normal)
-
-             waveSlider.isEnabled=true
-             waveSlider.minimumTrackTintColor=UIColor.blue
-             waveSlider.maximumTrackTintColor=UIColor.blue
-             getVHITWaves()
-             drawVHITBox()
-         }else{
-             let configuration = ARFaceTrackingConfiguration()
-             configuration.isLightEstimationEnabled = true
-             session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-             arKitFlag=true
-             waveSlider.isEnabled=false
-             ARKitButton.setImage(  UIImage(systemName:"stop.circle"), for: .normal)
-
-             waveSlider.minimumTrackTintColor=UIColor.gray
-             waveSlider.maximumTrackTintColor=UIColor.gray
-         }
-     }
+ 
      var dataType:Int=0
 
      @IBAction func onDataTypeButton(_ sender: Any) {
