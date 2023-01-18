@@ -19,7 +19,8 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bco-nM-nLc">
                                 <rect key="frame" x="0.0" y="59" width="393" height="759"/>
                                 <string key="text">ARKit HIT 
-2023/01/15 
+2023/01/18
+
 Kuroda ENT</string>
                                 <fontDescription key="fontDescription" name="HiraMaruProN-W4" family="Hiragino Maru Gothic ProN" pointSize="32"/>
                                 <nil key="textColor"/>
