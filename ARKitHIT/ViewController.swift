@@ -37,6 +37,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var lookAtPositionYLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     
+    @IBOutlet weak var sceneCopyView: UIImageView!
     @IBOutlet weak var waveSlider: UISlider!
     var defaultAlbumName:String = "ARvHIT"
     
@@ -48,15 +49,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
      var dataType:Int=0
     @IBAction func onTypeButton(_ sender: Any) {
         dataType += 1
-        if dataType>2{
+        if dataType>5{
             dataType=0
         }
-        if dataType==0{
-            dataTypeLabel.text="red:eyeRoll, black:faceRoll"
-        }else if dataType==1{
-            dataTypeLabel.text="red:eyePitch, black:facePitch"
+        var text1="angle\n"
+        if dataType>2{
+        text1="anglar velocity\n"
+        }
+        if dataType%3==0{
+            dataTypeLabel.text=text1 + "red:eyeRoll, black:headRoll"
+        }else if dataType%3==1{
+            dataTypeLabel.text=text1 + "red:eyePitch, black:headPitch"
         }else{//} dataType>=2{
-            dataTypeLabel.text="red:eyeYaw, black:faceYaw"
+            dataTypeLabel.text=text1 + "red:eyeYaw, black:headYaw"
         }
     }
     struct vHIT {
@@ -196,7 +201,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         button.layer.cornerRadius = 5
         button.backgroundColor = color
     }
-
+    func takeScreenShot() -> UIImage {
+//        let width: CGFloat = UIScreen.main.bounds.size.width
+//        let height: CGFloat = UIScreen.main.bounds.size.height
+//        let bW=view.bounds.width
+//        let bH=view.bounds.height
+//        let sp=realWidth/120//間隙
+//        let capHeight=bH*0.93
+//        let capWidth=capHeight*4/3
+        let size = CGSize(width: sceneViewRect!.width, height: sceneViewRect!.height)
+        let capRect = sceneViewRect// CGRect(x:-capX,y:-sp,width:bW,height:bH)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        view.drawHierarchy(in:capRect!, afterScreenUpdates: true)
+        let screenShotImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return screenShotImage
+    }
+    var sceneViewRect:CGRect?
     func setButtons(){
         
         let ww=view.bounds.width
@@ -216,13 +237,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         setButtonProperty(saveButton,x:sp*3.5+bw*1.5,y:by1,w:bw,h:bh,UIColor.white)
         setButtonProperty(waveClearButton,x:sp*4.5+bw*2.5,y:by1,w:bw,h: bh,UIColor.white)
         setButtonProperty(ARStartButton,x:sp*5.5+bw*3.5,y:by1,w:bw,h: bh,UIColor.white)
-         setButtonProperty(setteiButton,x:sp*6.5+bw*4.5,y:by1,w:bw,h: bh,UIColor.white)
+        setButtonProperty(setteiButton,x:sp*6.5+bw*4.5,y:by1,w:bw,h: bh,UIColor.white)
         setButtonProperty(how2Button,x:sp*7.5+bw*5.5,y:by1,w:bw,h: bh,UIColor.white)
-         waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
+        waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
         vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
         sceneView.frame=CGRect(x:view.bounds.width/3,y:vHITBoxView.frame.minY-sp-view.bounds.width/4,width: view.bounds.width/3,height: view.bounds.width/4)
         let y0=vHITBoxView.frame.maxY
         let y1=waveBoxView.frame.minY
+        sceneViewRect=sceneView.frame
+        sceneCopyView.frame=CGRect(x:sceneView.frame.maxX+sp,y:sceneView.frame.minY,width: sceneView.frame.width,height:sceneView.frame.height)
         
 //        setButtonProperty(typeButton, x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, w: bw, h: bh, UIColor.white)
         typeButton.frame=CGRect(x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, width: bw, height: bh)
@@ -521,7 +544,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var text=waves[endCnt-1].date
             var text2:String=""
             if arKitFlag==false && endCnt<waves.count-15{
-                text += "  n:" + endCnt.description + " face:" + Int(-waves[endCnt-1].face*10000).description
+                text += "  n:" + endCnt.description + " head:" + Int(-waves[endCnt-1].face*10000).description
                 
 #if DEBUG
                 text2 += Int(-waves[endCnt-1].face*10000).description + ","
@@ -593,21 +616,32 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var initFlag:Bool=true
     
     var timerCnt:Int=0
-
+    var lastEye:CGFloat=0
+    var lastFace:CGFloat=0
     func updateData(eye:CGFloat,face:CGFloat){
         timerCnt += 1
         let date = Date()
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss"// 2019-10-19 17:01:09
-        waves.append(wave(eye:eye,face:face,date:df.string(from:date)))
+        var eyeCurrent=eye
+        var faceCurrent=face
+        if dataType>2{
+            eyeCurrent = eye - lastEye
+            faceCurrent = face - lastFace
+        }
+        waves.append(wave(eye:eyeCurrent,face:faceCurrent,date:df.string(from:date)))
+        lastEye=eye
+        lastFace=face
         if waves.count>60*60*2{//2min
             waves.remove(at: 0)
         }
+//        sceneCopyView.image=takeScreenShot()
         drawWaveBox()
         if timerCnt%60==0{
             getVHITWaves()
             drawVHITBox()
         }
+//        sceneCopyView.image=takeScreenShot()
     }
     var initDrawVHITBoxFlag:Bool=true
     func drawVHITBox(){//解析結果のvHITwavesを表示する
