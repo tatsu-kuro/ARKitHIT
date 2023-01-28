@@ -175,8 +175,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         multiFace=CGFloat(getUserDefault(str:"multiFace" , ret:100))
 
         sceneView.delegate = self
-        //        sceneView.session.delegate = self//無くてもok?
-        //        sceneView.automaticallyUpdatesLighting = true//無くてもok?
+        sceneView.session.delegate = self//無くてもok?
+        sceneView.automaticallyUpdatesLighting = true//無くてもok?
         
         // Setup Scenegraph
         sceneView.scene.rootNode.addChildNode(faceNode)//無くても計算ok?表示はされない
@@ -201,23 +201,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         button.layer.cornerRadius = 5
         button.backgroundColor = color
     }
-    func takeScreenShot() -> UIImage {
-//        let width: CGFloat = UIScreen.main.bounds.size.width
-//        let height: CGFloat = UIScreen.main.bounds.size.height
-//        let bW=view.bounds.width
-//        let bH=view.bounds.height
-//        let sp=realWidth/120//間隙
-//        let capHeight=bH*0.93
-//        let capWidth=capHeight*4/3
-        let size = CGSize(width: sceneViewRect!.width, height: sceneViewRect!.height)
-        let capRect = sceneViewRect// CGRect(x:-capX,y:-sp,width:bW,height:bH)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-        view.drawHierarchy(in:capRect!, afterScreenUpdates: true)
-        let screenShotImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return screenShotImage
-    }
-    var sceneViewRect:CGRect?
+//    func takeScreenShot() -> UIImage {
+//        let size = CGSize(width: sceneViewRect!.width, height: sceneViewRect!.height)
+//        let capRect = sceneViewRect// CGRect(x:-capX,y:-sp,width:bW,height:bH)
+//        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+//        view.drawHierarchy(in:capRect!, afterScreenUpdates: true)
+//        let screenShotImage = UIGraphicsGetImageFromCurrentImageContext()!
+//        UIGraphicsEndImageContext()
+//        return screenShotImage
+//    }
+//    var sceneViewRect:CGRect?
     func setButtons(){
         
         let ww=view.bounds.width
@@ -243,11 +236,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
         sceneView.frame=CGRect(x:view.bounds.width/3,y:vHITBoxView.frame.minY-sp-view.bounds.width/4,width: view.bounds.width/3,height: view.bounds.width/4)
         let y0=vHITBoxView.frame.maxY
-        let y1=waveBoxView.frame.minY
-        sceneViewRect=sceneView.frame
-        sceneCopyView.frame=CGRect(x:sceneView.frame.maxX+sp,y:sceneView.frame.minY,width: sceneView.frame.width,height:sceneView.frame.height)
-        
-//        setButtonProperty(typeButton, x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, w: bw, h: bh, UIColor.white)
+        let y1=waveBoxView.frame.minY=true
+//        sceneViewRect=sceneView.frame//いずれ顔imageが保存できる時がくれば出番があるであろう。
+//        sceneCopyView.frame=CGRect(x:sceneView.frame.maxX+sp,y:sceneView.frame.minY,width: sceneView.frame.width,height:sceneView.frame.height)
+//
         typeButton.frame=CGRect(x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, width: bw, height: bh)
         dataTypeLabel.frame=CGRect(x:sp*2.5+bw*0.5,y:y0+(y1-y0-bh)/2,width:400,height:bh)
  
@@ -1059,11 +1051,62 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         }
     }
+    func arKitFlagOnPanGesture(sender:UIPanGestureRecognizer)
+    {
+        let move:CGPoint = sender.translation(in: self.view)
+        if sender.state == .began {
+            moveThumY=0
+            if sender.location(in: view).y>waveBoxView.frame.minY{//} view.bounds.height*2/5{
+                if sender.location(in: view).x<view.bounds.width/3{
+                    tapPosleftRight=0
+                    print("left")
+                }else if sender.location(in: view).x<view.bounds.width*2/3{
+                    tapPosleftRight=1
+                }else{
+                    tapPosleftRight=2
+                    print("right")
+                }
+                startMultiEye=multiEye
+                startMultiFace=multiFace
+            }
+        } else if sender.state == .changed {
+            if sender.location(in: view).y>waveBoxView.frame.minY{//} bounds.height*2/5{
+                moveThumY += move.y*move.y
+                moveThumY += move.y*move.y
+                
+                if tapPosleftRight==0{
+                    multiEye=startMultiEye - move.y
+                }else if tapPosleftRight==1{
+                    multiFace=startMultiFace - move.y
+                    multiEye=startMultiEye - move.y
+                }else{
+                    multiFace=startMultiFace - move.y
+                }
+                
+                if multiFace>4000{
+                    multiFace=4000
+                }else if multiFace<10{
+                    multiFace=10
+                }
+                
+                if multiEye>4000{
+                    multiEye=4000
+                }else if multiEye<10{
+                    multiEye=10
+                }
+            }
+        }else if sender.state == .ended{
+            UserDefaults.standard.set(multiFace, forKey: "multiFace")
+            UserDefaults.standard.set(multiEye, forKey: "multiEye")
+        }
+    }
     
     @IBAction func panGesture(_ sender: UIPanGestureRecognizer) {
         if arKitFlag==true{
+            arKitFlagOnPanGesture(sender: sender)
             return
         }
+
         let move:CGPoint = sender.translation(in: self.view)
         if sender.state == .began {
             moveThumX=0
