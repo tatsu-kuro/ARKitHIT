@@ -39,8 +39,8 @@
                                     <outletCollection property="gestureRecognizers" destination="ohV-kY-riP" appends="YES" id="vif-Ao-LPN"/>
                                 </connections>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="eyeWaveHeight" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Be-BS-M8E">
-                                <rect key="frame" x="133" y="77" width="119" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="eyeWaveHeight %" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Be-BS-M8E">
+                                <rect key="frame" x="133" y="77" width="138" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -57,8 +57,8 @@
                                     <outletCollection property="gestureRecognizers" destination="a14-Ap-s7T" appends="YES" id="SAd-c2-QIo"/>
                                 </connections>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="faceWaveHeight" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C9n-57-TgU">
-                                <rect key="frame" x="133" y="149" width="124" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="faceWaveHeight %" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C9n-57-TgU">
+                                <rect key="frame" x="133" y="149" width="144" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -75,6 +75,24 @@
                                     <action selector="onDefaultButton:" destination="mCY-ts-XwF" eventType="touchUpInside" id="mAm-Dt-Avh"/>
                                 </connections>
                             </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="AHu-1p-SFD">
+                                <rect key="frame" x="81" y="202" width="85" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="" image="waveform.path.badge.plus" catalog="system"/>
+                                    <segment title="" image="waveform.path.badge.minus" catalog="system"/>
+                                </segments>
+                                <connections>
+                                    <action selector="onVHITDisplayType:" destination="mCY-ts-XwF" eventType="valueChanged" id="gLm-mP-6NR"/>
+                                </connections>
+                            </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="vHIT wavefoms type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xL4-n9-c5O">
+                                <rect key="frame" x="218" y="207" width="155" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Xxh-Zx-Kbl"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -87,6 +105,8 @@
                         <outlet property="multiEyeText" destination="2Be-BS-M8E" id="aGv-WW-XbE"/>
                         <outlet property="multiFace" destination="bZn-2a-A86" id="pbq-2z-cgL"/>
                         <outlet property="multiFaceText" destination="C9n-57-TgU" id="3qh-Zz-30d"/>
+                        <outlet property="vHITDisplayText" destination="xL4-n9-c5O" id="Sod-pD-7fq"/>
+                        <outlet property="vHITDisplayType" destination="AHu-1p-SFD" id="smR-dH-wvC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EBQ-N0-6iC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -366,6 +386,8 @@
         <image name="questionmark.circle" catalog="system" width="128" height="123"/>
         <image name="stop.circle" catalog="system" width="128" height="123"/>
         <image name="trash.circle" catalog="system" width="128" height="123"/>
+        <image name="waveform.path.badge.minus" catalog="system" width="128" height="113"/>
+        <image name="waveform.path.badge.plus" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

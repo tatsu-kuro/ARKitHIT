@@ -9,11 +9,21 @@ import UIKit
 class SetteiViewController: UIViewController {
     @IBOutlet weak var defaultButton: UIButton!
     
+    @IBOutlet weak var vHITDisplayText: UILabel!
+    @IBOutlet weak var vHITDisplayType: UISegmentedControl!
     @IBOutlet weak var multiEye: UILabel!
     @IBOutlet weak var multiEyeText: UILabel!
     @IBOutlet weak var multiFace: UILabel!
     @IBOutlet weak var multiFaceText: UILabel!
     @IBOutlet weak var exitButton: UIButton!
+    @IBAction func onVHITDisplayType(_ sender: Any) {
+        if vHITDisplayType.selectedSegmentIndex==0{
+            UserDefaults.standard.set(true, forKey:"arKitDisplayMode")
+        }else{
+            UserDefaults.standard.set(false, forKey:"arKitDisplayMode")
+        }
+    }
+    
     func setLabelProperty(_ label:UILabel,x:CGFloat,y:CGFloat,w:CGFloat,h:CGFloat,_ color:UIColor){
         label.frame = CGRect(x:x, y:y, width: w, height: h)
         label.layer.borderColor = UIColor.black.cgColor
@@ -106,7 +116,14 @@ class SetteiViewController: UIViewController {
         alert.addAction(saveAction)
         present(alert, animated: true, completion: nil)
     }
-    
+    func getUserDefaultBool(str:String,ret:Bool) -> Bool{
+        if (UserDefaults.standard.object(forKey: str) != nil){
+            return UserDefaults.standard.bool(forKey: str)
+        }else{//keyが設定してなければretをセット
+            UserDefaults.standard.set(ret, forKey: str)
+            return ret
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         let ww=view.bounds.width
@@ -126,16 +143,20 @@ class SetteiViewController: UIViewController {
 
         setLabelProperty(multiFace,x:sp*2.5+bw*0.5,y:by0+sp+wh/30,w: bw,h: wh/30,UIColor.white)
         multiFaceText.frame=CGRect(x: multiEye.frame.maxX+sp, y: by0+sp+wh/30, width: bw*10, height: wh/30)
-
-//            setButtonProperty(mailButton,x:sp*2.5+bw*0.5,y:by1,w:bw,h:bh,UIColor.blue)
-
+        vHITDisplayType.frame=CGRect(x:sp*2.5+bw*0.5,y:by0+sp*2+wh/15,width:bw*2,height:wh/30)
+        vHITDisplayText.frame=CGRect(x:vHITDisplayType.frame.maxX+sp,y:vHITDisplayType.frame.minY,width:300,height:wh/30)
         defaultButton.frame=CGRect(x:sp*2.5+bw*0.5,y:by1,width: bw,height: bh)
         defaultButton.layer.cornerRadius=5
         
         exitButton.frame=CGRect(x:sp*7.5+bw*5.5,y:by1,width: bw,height: bh)
         exitButton.layer.cornerRadius=5
         
-
+        let arKitDisplayMode = getUserDefaultBool(str: "arKitDisplayMode", ret:true)
+        if arKitDisplayMode==true{
+            vHITDisplayType.selectedSegmentIndex=0
+        }else{
+            vHITDisplayType.selectedSegmentIndex=1
+        }
         // Do any additional setup after loading the view.
     }
     
