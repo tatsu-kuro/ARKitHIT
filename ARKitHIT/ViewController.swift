@@ -236,8 +236,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
         sceneView.frame=CGRect(x:view.bounds.width/3,y:vHITBoxView.frame.minY-sp-view.bounds.width/4,width: view.bounds.width/3,height: view.bounds.width/4)
         let y0=vHITBoxView.frame.maxY
-        let y1=waveBoxView.frame.minY=true
-//        sceneViewRect=sceneView.frame//いずれ顔imageが保存できる時がくれば出番があるであろう。
+        let y1=waveBoxView.frame.minY
+        sceneCopyView.isHidden=true//いずれ顔imageが保存できる時がくれば出番があるであろう。
+//        sceneViewRect=sceneView.frame
 //        sceneCopyView.frame=CGRect(x:sceneView.frame.maxX+sp,y:sceneView.frame.minY,width: sceneView.frame.width,height:sceneView.frame.height)
 //
         typeButton.frame=CGRect(x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, width: bw, height: bh)
