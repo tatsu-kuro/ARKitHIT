@@ -37,7 +37,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var lookAtPositionYLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     
-    @IBOutlet weak var sceneCopyView: UIImageView!
+//    @IBOutlet weak var sceneCopyView: UIImageView!
     @IBOutlet weak var waveSlider: UISlider!
     var defaultAlbumName:String = "ARvHIT"
     
@@ -278,12 +278,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
         let bh=bw
         let by1=wh-bottom-2*sp-bh
-//        let by1=by0-bh-sp//2段目
-//        let by1=by0
         let by2=by1-bh-sp//videoSlider
-//        lookAtPositionXLabel.frame=CGRect(x:sp,y:top+sp,width:200,height: bh/2)
-//        lookAtPositionYLabel.frame=CGRect(x:sp,y:top+sp+bh/2,width:200,height:bh/2)
-//        distanceLabel.frame=CGRect(x:sp,y:top+sp*2+bh*2/2,width:200,height:bh/2)
         setButtonProperty(listButton,x:sp*2.5+bw*0.5,y:by1,w:bw,h:bh,UIColor.white)
         setButtonProperty(saveButton,x:sp*3.5+bw*1.5,y:by1,w:bw,h:bh,UIColor.white)
         setButtonProperty(waveClearButton,x:sp*4.5+bw*2.5,y:by1,w:bw,h: bh,UIColor.white)
@@ -296,24 +291,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let y0=vHITBoxView.frame.maxY
         let y1=waveBoxView.frame.minY
         let sceneY=(vHITBoxView.frame.minY-top-view.bounds.width/4)/2+top
-//        vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
-//        waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
         sceneView.frame=CGRect(x:view.bounds.width/3,y:sceneY,width: view.bounds.width/3,height: view.bounds.width/4)
         lookAtPositionXLabel.frame=CGRect(x:sp,y:sceneY,width:200,height: bh/2)
         lookAtPositionYLabel.frame=CGRect(x:sp,y:sceneY+sp+bh/2,width:200,height:bh/2)
         distanceLabel.frame=CGRect(x:sp,y:sceneY+sp*2+bh*2/2,width:200,height:bh/2)
 
-        sceneCopyView.isHidden=true//いずれ顔imageが保存できる時がくれば出番があるであろう。
+//        sceneCopyView.isHidden=true//いずれ顔imageが保存できる時がくれば出番があるであろう。
 //        sceneViewRect=sceneView.frame
 //        sceneCopyView.frame=CGRect(x:sceneView.frame.maxX+sp,y:sceneView.frame.minY,width: sceneView.frame.width,height:sceneView.frame.height)
 //
         typeButton.frame=CGRect(x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, width: bw, height: bh)
         dataTypeLabel.frame=CGRect(x:sp*2.5+bw*0.5,y:y0+(y1-y0-bh)/2,width:400,height:bh)
- 
         waveSlider.frame=CGRect(x:sp*2,y:by2,width: ww-sp*4,height:20)//とりあえず
         let sliderHeight=waveSlider.frame.height
         waveSlider.frame=CGRect(x:sp*2,y:(waveBoxView.frame.maxY+by1)/2-sliderHeight/2,width:ww-sp*4,height:sliderHeight)
-    
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -613,7 +604,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             drawPath2.stroke()
             var text=waves[endCnt-1].date
             var text2:String=""
-            if arKitFlag==false && endCnt<waves.count-15{
+            if arKitFlag==false && endCnt<waves.count-15 && endCnt>60{
                 text += "  n:" + endCnt.description + " head:" + Int(-waves[endCnt-1].face*10000).description
                 
 #if DEBUG
