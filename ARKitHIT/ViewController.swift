@@ -538,8 +538,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         waveSlider.value=Float(waves.count)
         waveSlider.addTarget(self, action: #selector(onWaveSliderValueChange), for: UIControl.Event.valueChanged)
     }
-    func drawWaveadd(pt:CGFloat){
-        
+    func getDoubleString(_ d:Double)->String{
+        let str=d.description
+        let strs=str.components(separatedBy: ".")
+        return strs[0]
     }
     func drawWave(startCnt:Int,endCnt:Int) -> UIImage {
 //        print("multiEye:",multiFace)
@@ -561,16 +563,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 let px = dx * CGFloat(n-startCnt)
                 py1 = waves[n].face * multiFace + y1
                 py2 = waves[n].eye * multiEye + y2
-                if py1<1{
-                    py1=1
-                }else if py1>height-1{
-                    py1=height-1
+                if py1.isNaN{
+                    py1=0
                 }
-                if py2<1{
-                    py2=1
-                }else if py2>height-1{
-                    py2=height-1
+                if py2.isNaN{
+                    py2=0
                 }
+//                if py1<1{
+//                    py1=1
+//                }else if py1>height-1{
+//                    py1=height-1
+//                }
+//                if py2<1{
+//                    py2=1
+//                }else if py2>height-1{
+//                    py2=height-1
+//                }
                 let point1 = CGPoint(x: px, y: py1)
                 let point2 = CGPoint(x: px, y: py2)
                 pointList1.append(point1)
@@ -608,17 +616,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var text=waves[endCnt-1].date
             var text2:String=""
             if arKitFlag==false && endCnt<waves.count-15 && endCnt>60{
-                text += "  n:" + endCnt.description + " head:" + (floor(-waves[endCnt-1].face*10000)).description
-                
+                text += "  n:" + endCnt.description + " head:" + getDoubleString(-waves[endCnt-1].face*10000)
+//               text += "  n:" + endCnt.description + " head:" + (floor(-waves[endCnt-1].face*10000)).description
+
 #if DEBUG
-                text2 += (floor(-waves[endCnt-1].face*10000)).description + ","
-                text2 += (floor(-waves[endCnt].face*10000)).description + ","
-                text2 += (floor(-waves[endCnt+1].face*10000)).description + ","
-                text2 += (floor(-waves[endCnt+2].face*10000)).description + ","
-                text2 += (floor(-waves[endCnt+3].face*10000)).description + ","
-                text2 += (floor(-waves[endCnt+4].face*10000)).description + ","
-                text2 += (floor(-waves[endCnt+5].face*10000)).description + ","
-                text2 += (floor(-waves[endCnt+6].face*10000)).description + ","
+                text2 += getDoubleString(-waves[endCnt-1].face*10000) + ","
+                text2 += getDoubleString(-waves[endCnt].face*10000) + ","
+                text2 += getDoubleString(-waves[endCnt+1].face*10000) + ","
+                text2 += getDoubleString(-waves[endCnt+2].face*10000) + ","
+                text2 += getDoubleString(-waves[endCnt+3].face*10000) + ","
+                text2 += getDoubleString(-waves[endCnt+4].face*10000) + ","
+                text2 += getDoubleString(-waves[endCnt+5].face*10000) + ","
+                text2 += getDoubleString(-waves[endCnt+6].face*10000) + ","
                 text2.draw(at:CGPoint(x:3,y:3+20),withAttributes: [
                     NSAttributedString.Key.foregroundColor : UIColor.black,
                     NSAttributedString.Key.font : UIFont.monospacedDigitSystemFont(ofSize: 13, weight: UIFont.Weight.regular)])
@@ -658,8 +667,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if waves.count<60{
             return
         }
-        let endCnt=Int(floor(waveSlider.value))
-        print(floor(waveSlider.value),endCnt)
+        if waveSlider.value.isNaN{
+            return
+        }
+        let endCnt=Int(waveSlider.value)
+//        print(floor(waveSlider.value),endCnt)
         waveBoxView.layer.sublayers?.removeLast()
         let startCnt = endCnt-60//点の数
         //波形を時間軸で表示
@@ -874,16 +886,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
                 py1 += posY0
                 py2 += posY0
-                if py1<1{
-                    py1=1
-                }else if py1>180*r-1{
-                    py1=180*r-1
+                if py1.isNaN{
+                    py1=0
                 }
-                if py2<1{
-                    py2=1
-                }else if py2>180*r-1{
-                    py2=180*r-1
+                if py2.isNaN{
+                    py2=0
                 }
+//                if py1<1{
+//                    py1=1
+//                }else if py1>180*r-1{
+//                    py1=180*r-1
+//                }
+//                if py2<1{
+//                    py2=1
+//                }else if py2>180*r-1{
+//                    py2=180*r-1
+//                }
                 let point1 = CGPoint(x:px,y:py1)
                 let point2 = CGPoint(x:px,y:py2)
                 pointListEye.append(point1)
@@ -1189,7 +1207,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             arKitFlagOnPanGesture(sender: sender)
             return
         }
-
+        if waveSlider.value.isNaN==true{
+            return
+        }
         let move:CGPoint = sender.translation(in: self.view)
         if sender.state == .began {
             moveThumX=0
@@ -1206,7 +1226,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
                 startMultiEye=multiEye
                 startMultiFace=multiFace
-                startCnt=Int(floor(waveSlider.value))
+                startCnt=Int(waveSlider.value)
             }
         } else if sender.state == .changed {
             if sender.location(in: view).y>waveBoxView.frame.minY{//} bounds.height*2/5{
