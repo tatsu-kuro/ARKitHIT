@@ -35,8 +35,8 @@ class ImagePickerViewController: UIViewController, MFMailComposeViewControllerDe
         let sp:CGFloat=5
         let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
         let bh=bw
-        let by0=wh-bottom-2*sp-bh
-        let by1=by0-bh-sp//2段目
+        let by1=wh-bottom-2*sp-bh
+//        let by1=by0-bh-sp//2段目
 //        let by2=by1-bh-sp//videoSlider
         setButtonProperty(mailButton,x:sp*2.5+bw*0.5,y:by1,w:bw,h:bh,UIColor.blue)
         setButtonProperty(exitButton,x:sp*7.5+bw*5.5,y:by1,w:bw,h: bh,UIColor.blue)

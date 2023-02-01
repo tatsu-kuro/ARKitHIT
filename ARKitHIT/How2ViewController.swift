@@ -19,7 +19,16 @@ class How2ViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        /*
+         let ww=view.bounds.width
+         let wh=view.bounds.height
+         let top:CGFloat=40//CGFloat(UserDefaults.standard.float(forKey: "top"))
+         let bottom:CGFloat=20//CGFloat( UserDefaults.standard.float(forKey: "bottom"))
+         let sp:CGFloat=5
+         let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
+         let bh=bw
+         let by1=wh-bottom-2*sp-bh
+         */
         let ww=view.bounds.width
         let wh=view.bounds.height
         let top:CGFloat=40//CGFloat(UserDefaults.standard.float(forKey: "top"))
@@ -27,13 +36,13 @@ class How2ViewController: UIViewController {
         let sp:CGFloat=5
         let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
         let bh=bw
-        let by0=wh-bottom-2*sp-bh
-        let by1=by0-bh-sp//2段目
+        let by1=wh-bottom-2*sp-bh
+//        let by1=by0-bh-sp//2段目
         setButtonProperty(exitButton,x:sp*7.5+bw*5.5,y:by1,w:bw,h: bh,UIColor.blue)
  
         scrollView.frame = CGRect(x:0,y:top,width: ww,height: exitButton.frame.minY)
           var img = UIImage(named:"helpEng")!
-        if firstLang().contains("ja"){
+        if !firstLang().contains("ja"){
             img = UIImage(named: "helpJap")!
         }
         // 画像のサイズ

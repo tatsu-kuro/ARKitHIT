@@ -133,8 +133,10 @@ class SetteiViewController: UIViewController {
         let sp:CGFloat=5
         let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
         let bh=bw
+        let by1=wh-bottom-2*sp-bh
+
         let by0=top+sp+wh/30*2
-        let by1=wh-bottom-3*sp-2*bh
+//        let by1=wh-bottom-3*sp-2*bh
         multiEye.text=getUserDefault(str:"multiEye" , ret:100).description
         multiFace.text=getUserDefault(str:"multiFace" , ret:100).description
         

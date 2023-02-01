@@ -201,7 +201,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         button.layer.cornerRadius = 5
         button.backgroundColor = color
     }
-//    func takeScreenShot() -> UIImage {
+//    func takeScreenShot1() -> UIImage {
 //        let size = CGSize(width: sceneViewRect!.width, height: sceneViewRect!.height)
 //        let capRect = sceneViewRect// CGRect(x:-capX,y:-sp,width:bW,height:bH)
 //        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
@@ -210,9 +210,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //        UIGraphicsEndImageContext()
 //        return screenShotImage
 //    }
+//    func takeScreenShot() -> UIImage {
+//        let width: CGFloat = UIScreen.main.bounds.size.width
+//        let height: CGFloat = UIScreen.main.bounds.size.height
+//        let size = CGSize(width: width, height: height)
+//
+//        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+//        view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+//        let screenShotImage = UIGraphicsGetImageFromCurrentImageContext()!
+//        UIGraphicsEndImageContext()
+//
+//        return screenShotImage
+//    }
 //    var sceneViewRect:CGRect?
+    /*
     func setButtons(){
-        
         let ww=view.bounds.width
         let wh=view.bounds.height
         let top:CGFloat=40//CGFloat(UserDefaults.standard.float(forKey: "top"))
@@ -221,7 +233,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
         let bh=bw
         let by0=wh-bottom-2*sp-bh
-        let by1=by0-bh-sp//2段目
+//        let by1=by0-bh-sp//2段目
+        let by1=by0
         let by2=by1-bh-sp//videoSlider
         lookAtPositionXLabel.frame=CGRect(x:sp,y:top+sp,width:200,height: bh/2)
         lookAtPositionYLabel.frame=CGRect(x:sp,y:top+sp+bh/2,width:200,height:bh/2)
@@ -232,11 +245,64 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         setButtonProperty(ARStartButton,x:sp*5.5+bw*3.5,y:by1,w:bw,h: bh,UIColor.white)
         setButtonProperty(setteiButton,x:sp*6.5+bw*4.5,y:by1,w:bw,h: bh,UIColor.white)
         setButtonProperty(how2Button,x:sp*7.5+bw*5.5,y:by1,w:bw,h: bh,UIColor.white)
-        waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
-        vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
+        let betw=(wh-top-bottom-ww*180/320-ww*2/5-bh)/4
+//        waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
+//        vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
+        vHITBoxView.frame=CGRect(x:0,y:top+betw*2,width :ww,height:ww*2/5)
+        waveBoxView.frame=CGRect(x:0,y:vHITBoxView.frame.maxY+betw,width:ww,height: ww*180/320)
+ 
         sceneView.frame=CGRect(x:view.bounds.width/3,y:vHITBoxView.frame.minY-sp-view.bounds.width/4,width: view.bounds.width/3,height: view.bounds.width/4)
         let y0=vHITBoxView.frame.maxY
         let y1=waveBoxView.frame.minY
+        sceneCopyView.isHidden=true//いずれ顔imageが保存できる時がくれば出番があるであろう。
+//        sceneViewRect=sceneView.frame
+//        sceneCopyView.frame=CGRect(x:sceneView.frame.maxX+sp,y:sceneView.frame.minY,width: sceneView.frame.width,height:sceneView.frame.height)
+//
+        typeButton.frame=CGRect(x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, width: bw, height: bh)
+        dataTypeLabel.frame=CGRect(x:sp*2.5+bw*0.5,y:y0+(y1-y0-bh)/2,width:400,height:bh)
+ 
+        waveSlider.frame=CGRect(x:sp*2,y:by2,width: ww-sp*4,height:20)//とりあえず
+        let sliderHeight=waveSlider.frame.height
+        waveSlider.frame=CGRect(x:sp*2,y:(waveBoxView.frame.maxY+by1)/2-sliderHeight/2,width:ww-sp*4,height:sliderHeight)
+    
+    }
+    
+    */
+    func setButtons(){
+        
+        let ww=view.bounds.width
+        let wh=view.bounds.height
+        let top:CGFloat=40//CGFloat(UserDefaults.standard.float(forKey: "top"))
+        let bottom:CGFloat=20//CGFloat( UserDefaults.standard.float(forKey: "bottom"))
+        let sp:CGFloat=5
+        let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
+        let bh=bw
+        let by1=wh-bottom-2*sp-bh
+//        let by1=by0-bh-sp//2段目
+//        let by1=by0
+        let by2=by1-bh-sp//videoSlider
+//        lookAtPositionXLabel.frame=CGRect(x:sp,y:top+sp,width:200,height: bh/2)
+//        lookAtPositionYLabel.frame=CGRect(x:sp,y:top+sp+bh/2,width:200,height:bh/2)
+//        distanceLabel.frame=CGRect(x:sp,y:top+sp*2+bh*2/2,width:200,height:bh/2)
+        setButtonProperty(listButton,x:sp*2.5+bw*0.5,y:by1,w:bw,h:bh,UIColor.white)
+        setButtonProperty(saveButton,x:sp*3.5+bw*1.5,y:by1,w:bw,h:bh,UIColor.white)
+        setButtonProperty(waveClearButton,x:sp*4.5+bw*2.5,y:by1,w:bw,h: bh,UIColor.white)
+        setButtonProperty(ARStartButton,x:sp*5.5+bw*3.5,y:by1,w:bw,h: bh,UIColor.white)
+        setButtonProperty(setteiButton,x:sp*6.5+bw*4.5,y:by1,w:bw,h: bh,UIColor.white)
+        setButtonProperty(how2Button,x:sp*7.5+bw*5.5,y:by1,w:bw,h: bh,UIColor.white)
+        let sp2=(by1-top-ww*2/5-ww*18/32)/4
+        vHITBoxView.frame=CGRect(x:0,y:top+sp2*2,width :ww,height:ww*2/5)
+        waveBoxView.frame=CGRect(x:0,y:top+sp2*3+ww*2/5,width:ww,height: ww*180/320)
+        let y0=vHITBoxView.frame.maxY
+        let y1=waveBoxView.frame.minY
+        let sceneY=(vHITBoxView.frame.minY-top-view.bounds.width/4)/2+top
+//        vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
+//        waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
+        sceneView.frame=CGRect(x:view.bounds.width/3,y:sceneY,width: view.bounds.width/3,height: view.bounds.width/4)
+        lookAtPositionXLabel.frame=CGRect(x:sp,y:sceneY,width:200,height: bh/2)
+        lookAtPositionYLabel.frame=CGRect(x:sp,y:sceneY+sp+bh/2,width:200,height:bh/2)
+        distanceLabel.frame=CGRect(x:sp,y:sceneY+sp*2+bh*2/2,width:200,height:bh/2)
+
         sceneCopyView.isHidden=true//いずれ顔imageが保存できる時がくれば出番があるであろう。
 //        sceneViewRect=sceneView.frame
 //        sceneCopyView.frame=CGRect(x:sceneView.frame.maxX+sp,y:sceneView.frame.minY,width: sceneView.frame.width,height:sceneView.frame.height)
@@ -491,8 +557,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let pointCount:CGFloat = 60 // 点の個数
         // xの間隔
         let dx:CGFloat = view.bounds.width/pointCount
-        let y1=view.bounds.width*18/32*2/6
-        let y2=view.bounds.width*18/32*4/6
+        let height=view.bounds.width*18/32
+        let y1=height*2/6
+        let y2=height*4/6
         var py1:CGFloat=0
         var py2:CGFloat=0
         if endCnt>5{
@@ -500,6 +567,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 let px = dx * CGFloat(n-startCnt)
                 py1 = waves[n].face * multiFace + y1
                 py2 = waves[n].eye * multiEye + y2
+                if py1<1{
+                    py1=1
+                }else if py1>height-1{
+                    py1=height-1
+                }
+                if py2<1{
+                    py2=1
+                }else if py2>height-1{
+                    py2=height-1
+                }
                 let point1 = CGPoint(x: px, y: py1)
                 let point2 = CGPoint(x: px, y: py2)
                 pointList1.append(point1)
