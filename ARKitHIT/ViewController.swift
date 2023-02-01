@@ -538,6 +538,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         waveSlider.value=Float(waves.count)
         waveSlider.addTarget(self, action: #selector(onWaveSliderValueChange), for: UIControl.Event.valueChanged)
     }
+    func drawWaveadd(pt:CGFloat){
+        
+    }
     func drawWave(startCnt:Int,endCnt:Int) -> UIImage {
 //        print("multiEye:",multiFace)
         let size = CGSize(width:view.bounds.width, height:view.bounds.width*18/32)
@@ -605,17 +608,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var text=waves[endCnt-1].date
             var text2:String=""
             if arKitFlag==false && endCnt<waves.count-15 && endCnt>60{
-                text += "  n:" + endCnt.description + " head:" + Int(-waves[endCnt-1].face*10000).description
+                text += "  n:" + endCnt.description + " head:" + (floor(-waves[endCnt-1].face*10000)).description
                 
 #if DEBUG
-                text2 += Int(-waves[endCnt-1].face*10000).description + ","
-                text2 += Int(-waves[endCnt].face*10000).description + ","
-                text2 += Int(-waves[endCnt+1].face*10000).description + ","
-                text2 += Int(-waves[endCnt+2].face*10000).description + ","
-                text2 += Int(-waves[endCnt+3].face*10000).description + ","
-                text2 += Int(-waves[endCnt+4].face*10000).description + ","
-                text2 += Int(-waves[endCnt+5].face*10000).description + ","
-                text2 += Int(-waves[endCnt+6].face*10000).description + ","
+                text2 += (floor(-waves[endCnt-1].face*10000)).description + ","
+                text2 += (floor(-waves[endCnt].face*10000)).description + ","
+                text2 += (floor(-waves[endCnt+1].face*10000)).description + ","
+                text2 += (floor(-waves[endCnt+2].face*10000)).description + ","
+                text2 += (floor(-waves[endCnt+3].face*10000)).description + ","
+                text2 += (floor(-waves[endCnt+4].face*10000)).description + ","
+                text2 += (floor(-waves[endCnt+5].face*10000)).description + ","
+                text2 += (floor(-waves[endCnt+6].face*10000)).description + ","
                 text2.draw(at:CGPoint(x:3,y:3+20),withAttributes: [
                     NSAttributedString.Key.foregroundColor : UIColor.black,
                     NSAttributedString.Key.font : UIFont.monospacedDigitSystemFont(ofSize: 13, weight: UIFont.Weight.regular)])
@@ -655,7 +658,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if waves.count<60{
             return
         }
-        let endCnt=Int(waveSlider.value)
+        let endCnt=Int(floor(waveSlider.value))
+        print(floor(waveSlider.value),endCnt)
         waveBoxView.layer.sublayers?.removeLast()
         let startCnt = endCnt-60//点の数
         //波形を時間軸で表示
@@ -870,6 +874,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
                 py1 += posY0
                 py2 += posY0
+                if py1<1{
+                    py1=1
+                }else if py1>180*r-1{
+                    py1=180*r-1
+                }
+                if py2<1{
+                    py2=1
+                }else if py2>180*r-1{
+                    py2=180*r-1
+                }
                 let point1 = CGPoint(x:px,y:py1)
                 let point2 = CGPoint(x:px,y:py2)
                 pointListEye.append(point1)
@@ -930,9 +944,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 var text:String=""
                 for j in 2..<10{
                     if j==6{
-                        text += Int(-vHITs[i].face[j]*10000).description + ","
+                        text += (floor(-vHITs[i].face[j]*10000)).description + ","
                     }else{
-                        text += Int(-vHITs[i].face[j]*10000).description + ":"
+                        text += (floor(-vHITs[i].face[j]*10000)).description + ":"
                     }
                 }
                 text.description.draw(at: CGPoint(x: 3*r, y: 15), withAttributes: [
@@ -1192,7 +1206,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
                 startMultiEye=multiEye
                 startMultiFace=multiFace
-                startCnt=Int(waveSlider.value)
+                startCnt=Int(floor(waveSlider.value))
             }
         } else if sender.state == .changed {
             if sender.location(in: view).y>waveBoxView.frame.minY{//} bounds.height*2/5{
