@@ -42,7 +42,7 @@ class How2ViewController: UIViewController {
  
         scrollView.frame = CGRect(x:0,y:top,width: ww,height: exitButton.frame.minY)
           var img = UIImage(named:"helpEng")!
-        if !firstLang().contains("ja"){
+        if firstLang().contains("ja"){
             img = UIImage(named: "helpJap")!
         }
         // 画像のサイズ

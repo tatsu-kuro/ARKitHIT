@@ -37,7 +37,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var lookAtPositionYLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     
-//    @IBOutlet weak var sceneCopyView: UIImageView!
+ 
+    //    @IBOutlet weak var sceneCopyView: UIImageView!
     @IBOutlet weak var waveSlider: UISlider!
     var defaultAlbumName:String = "ARvHIT"
     
@@ -49,6 +50,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
      var dataType:Int=0
     @IBAction func onTypeButton(_ sender: Any) {
         dataType += 1
+        
         if dataType>5{
             dataType=0
         }

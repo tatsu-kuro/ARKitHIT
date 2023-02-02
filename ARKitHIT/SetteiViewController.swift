@@ -9,6 +9,8 @@ import UIKit
 class SetteiViewController: UIViewController {
     @IBOutlet weak var defaultButton: UIButton!
     
+    @IBOutlet weak var angle4DebugText: UILabel!
+    @IBOutlet weak var angle4DebugSwitch: UISwitch!
     @IBOutlet weak var vHITDisplayText: UILabel!
     @IBOutlet weak var vHITDisplayType: UISegmentedControl!
     @IBOutlet weak var multiEye: UILabel!
@@ -16,6 +18,9 @@ class SetteiViewController: UIViewController {
     @IBOutlet weak var multiFace: UILabel!
     @IBOutlet weak var multiFaceText: UILabel!
     @IBOutlet weak var exitButton: UIButton!
+    
+    @IBAction func onAngle4Debug(_ sender: UISwitch) {
+    }
     @IBAction func onVHITDisplayType(_ sender: Any) {
         if vHITDisplayType.selectedSegmentIndex==0{
             UserDefaults.standard.set(true, forKey:"arKitDisplayMode")
@@ -133,23 +138,24 @@ class SetteiViewController: UIViewController {
         let sp:CGFloat=5
         let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
         let bh=bw
+        let cntH=angle4DebugSwitch.frame.height//switchの高さに合わせる
         let by1=wh-bottom-2*sp-bh
 
         let by0=top+sp+wh/30*2
-//        let by1=wh-bottom-3*sp-2*bh
+
         multiEye.text=getUserDefault(str:"multiEye" , ret:100).description
         multiFace.text=getUserDefault(str:"multiFace" , ret:100).description
         
-        setLabelProperty(multiEye, x: sp*2.5+bw*0.5, y: by0, w: bw, h: wh/30, UIColor.white)
-        multiEyeText.frame=CGRect(x: multiEye.frame.maxX+sp, y: by0, width: bw*10, height: wh/30)
-
-        setLabelProperty(multiFace,x:sp*2.5+bw*0.5,y:by0+sp+wh/30,w: bw,h: wh/30,UIColor.white)
-        multiFaceText.frame=CGRect(x: multiEye.frame.maxX+sp, y: by0+sp+wh/30, width: bw*10, height: wh/30)
-        vHITDisplayType.frame=CGRect(x:sp*2.5+bw*0.5,y:by0+sp*2+wh/15,width:bw*2,height:wh/30)
-        vHITDisplayText.frame=CGRect(x:vHITDisplayType.frame.maxX+sp,y:vHITDisplayType.frame.minY,width:300,height:wh/30)
+        setLabelProperty(multiEye, x: sp*2.5+bw*0.5, y: by0, w: bw, h: cntH, UIColor.white)
+        multiEyeText.frame=CGRect(x: multiEye.frame.maxX+sp, y: by0, width: bw*10, height: cntH)
+        setLabelProperty(multiFace,x:sp*2.5+bw*0.5,y:by0+sp+cntH,w: bw,h: cntH,UIColor.white)
+        multiFaceText.frame=CGRect(x: multiEye.frame.maxX+sp, y: by0+sp+cntH, width: bw*10, height: cntH)
+        vHITDisplayType.frame=CGRect(x:sp*2.5+bw*0.5,y:by0+sp*2+cntH*2,width:bw*2,height:cntH)
+        vHITDisplayText.frame=CGRect(x:vHITDisplayType.frame.maxX+sp,y:by0+sp*2+cntH*2,width:300,height:cntH)
+        angle4DebugSwitch.frame=CGRect(x:sp*2.5+bw*0.5,y:by0+sp*3+cntH*3,width: vHITDisplayType.frame.width,height: cntH)
+        angle4DebugText.frame=CGRect(x:angle4DebugSwitch.frame.maxX+sp,y:by0+sp*3+cntH*3,width:300,height:cntH)
         defaultButton.frame=CGRect(x:sp*2.5+bw*0.5,y:by1,width: bw,height: bh)
         defaultButton.layer.cornerRadius=5
-        
         exitButton.frame=CGRect(x:sp*7.5+bw*5.5,y:by1,width: bw,height: bh)
         exitButton.layer.cornerRadius=5
         
