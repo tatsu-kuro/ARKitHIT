@@ -55,7 +55,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         var text1="gray: head anglar velocity "
         var text2="red: eye anglar velocity "
-        if dataType>2{
+        if dataType<3{
             text1="gray: head angle "
             text2="red: eye angle "
         }
