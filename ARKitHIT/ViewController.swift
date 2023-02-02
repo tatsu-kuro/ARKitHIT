@@ -50,20 +50,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
      var dataType:Int=0
     @IBAction func onTypeButton(_ sender: Any) {
         dataType += 1
-        
         if dataType>5{
             dataType=0
         }
-        var text1="angle\n"
+        var text1="gray: head anglar velocity "
+        var text2="red: eye anglar velocity "
         if dataType>2{
-        text1="anglar velocity\n"
+            text1="gray: head angle "
+            text2="red: eye angle "
         }
         if dataType%3==0{
-            dataTypeLabel.text=text1 + "red:eyeRoll, black:headRoll"
+            dataTypeLabel.text=text1 + "/Roll\n" + text2 + "/Roll"
         }else if dataType%3==1{
-            dataTypeLabel.text=text1 + "red:eyePitch, black:headPitch"
+            dataTypeLabel.text=text1 + "/Pitch\n" + text2 + "/Pitch"
         }else{//} dataType>=2{
-            dataTypeLabel.text=text1 + "red:eyeYaw, black:headYaw"
+            dataTypeLabel.text=text1 + "/Yaw\n" + text2 + "/Yaw"
         }
     }
     struct vHIT {

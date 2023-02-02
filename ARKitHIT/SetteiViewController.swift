@@ -20,6 +20,11 @@ class SetteiViewController: UIViewController {
     @IBOutlet weak var exitButton: UIButton!
     
     @IBAction func onAngle4Debug(_ sender: UISwitch) {
+        if sender.isOn{
+            UserDefaults.standard.set(true, forKey:"angle4Debug")
+        }else{
+            UserDefaults.standard.set(false, forKey:"angle4Debug")
+        }
     }
     @IBAction func onVHITDisplayType(_ sender: Any) {
         if vHITDisplayType.selectedSegmentIndex==0{
@@ -158,14 +163,16 @@ class SetteiViewController: UIViewController {
         defaultButton.layer.cornerRadius=5
         exitButton.frame=CGRect(x:sp*7.5+bw*5.5,y:by1,width: bw,height: bh)
         exitButton.layer.cornerRadius=5
-        
-        let arKitDisplayMode = getUserDefaultBool(str: "arKitDisplayMode", ret:true)
-        if arKitDisplayMode==true{
+        if getUserDefaultBool(str: "arKitDisplayMode", ret:true){
             vHITDisplayType.selectedSegmentIndex=0
         }else{
             vHITDisplayType.selectedSegmentIndex=1
         }
-        // Do any additional setup after loading the view.
+        if getUserDefaultBool(str: "angle4Debug", ret:false){
+            angle4DebugSwitch.isOn=true
+        }else{
+            angle4DebugSwitch.isOn=false
+        }
     }
     
 
