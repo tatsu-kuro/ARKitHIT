@@ -1,10 +1,15 @@
 //  ViewController.swift
 
-import UIKit
+
 import SceneKit
-import ARKit
+import UIKit
+import AVFoundation
 import AssetsLibrary
 import Photos
+import MessageUI
+import ARKit
+import os
+
 //import WebKit
 extension UIImage {
     func resize(size _size: CGSize) -> UIImage? {
@@ -21,6 +26,54 @@ extension UIImage {
         return resizedImage
     }
 }
+extension matrix_float4x4 {
+    // Function to convert rad to deg
+    func radiansToDegress(radians: Float32) -> Float32 {
+        return radians * 180 / (Float32.pi)
+    }
+    var translation: SCNVector3 {
+       get {
+           return SCNVector3Make(columns.3.x, columns.3.y, columns.3.z)
+       }
+    }
+    // Retrieve euler angles from a quaternion matrix
+    var eulerAngles: SCNVector3 {
+        get {
+            // Get quaternions
+            let qw = sqrt(1 + self.columns.0.x + self.columns.1.y + self.columns.2.z) / 2.0
+            let qx = (self.columns.2.y - self.columns.1.z) / (qw * 4.0)
+            let qy = (self.columns.0.z - self.columns.2.x) / (qw * 4.0)
+            let qz = (self.columns.1.x - self.columns.0.y) / (qw * 4.0)
+
+            // Deduce euler angles
+            /// yaw (z-axis rotation)
+            let siny = +2.0 * (qw * qz + qx * qy)
+            let cosy = +1.0 - 2.0 * (qy * qy + qz * qz)
+//            let yaw = radiansToDegress(radians:atan2(siny, cosy))
+            let yaw = atan2(siny, cosy)
+            // pitch (y-axis rotation)
+            let sinp = +2.0 * (qw * qy - qz * qx)
+            var pitch: Float
+            if abs(sinp) >= 1 {
+//                pitch = radiansToDegress(radians:copysign(Float.pi / 2, sinp))
+                pitch = copysign(Float.pi / 2, sinp)
+            } else {
+//                pitch = radiansToDegress(radians:asin(sinp))
+                pitch = asin(sinp)
+            }
+            /// roll (x-axis rotation)
+            let sinr = +2.0 * (qw * qx + qy * qz)
+            let cosr = +1.0 - 2.0 * (qx * qx + qy * qy)
+//            let roll = radiansToDegress(radians:atan2(sinr, cosr))
+            let roll = atan2(sinr, cosr)
+            
+            /// return array containing ypr values
+            return SCNVector3(yaw, pitch, roll)
+            }
+    }
+}
+
+
 @available(iOS 13.0, *)
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var typeButton: UIButton!
@@ -36,34 +89,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var lookAtPositionXLabel: UILabel!
     @IBOutlet weak var lookAtPositionYLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
-    
- 
     //    @IBOutlet weak var sceneCopyView: UIImageView!
     @IBOutlet weak var waveSlider: UISlider!
     var defaultAlbumName:String = "ARvHIT"
-    
     @IBOutlet weak var dataTypeLabel: UILabel!
     var multiEye:CGFloat=100
     var multiFace:CGFloat=100
     var arKitDisplayMode:Bool=true
     var faceAnchorFlag:Bool=false
-     var dataType:Int=0
+    var dataType:Int=0//初期値は１となる。１->pitch
     @IBAction func onTypeButton(_ sender: Any) {
         dataType += 1
-        if dataType>5{
+        if dataType>2{
             dataType=0
         }
         var text1="gray: head anglar velocity "
         var text2="red: eye anglar velocity "
-        if dataType<3{
+        if getUserDefaultBool(str: "angle4Debug", ret:false){
             text1="gray: head angle "
             text2="red: eye angle "
         }
-        if dataType%3==0{
+        if dataType==0{
             dataTypeLabel.text=text1 + "/Roll\n" + text2 + "/Roll"
-        }else if dataType%3==1{
-            dataTypeLabel.text=text1 + "/Pitch\n" + text2 + "/Pitch"
-        }else{//} dataType>=2{
+        }else if dataType==1{
+            dataTypeLabel.text=text1 + "\n" + text2//"/Pitch\n" + text2 + "/Pitch"
+        }else{
             dataTypeLabel.text=text1 + "/Yaw\n" + text2 + "/Yaw"
         }
     }
@@ -90,7 +140,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         vHITs.append(temp)
     }
     
-    //    var faceNode: SCNNode = SCNNode()
     //ここで表示、
     var faceNode: SCNNode = {
         let geometry = SCNCone(topRadius: 0.005, bottomRadius: 0, height: 0.2)
@@ -165,8 +214,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             return ret
         }
     }
+    func dispFilesindoc(){
+        let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        do {
+            let contentUrls = try FileManager.default.contentsOfDirectory(at: documentDirectoryURL, includingPropertiesForKeys: nil)
+            let files = contentUrls.map{$0.lastPathComponent}
+            
+            for i in 0..<files.count{
+                print(files[i])
+            }
+        } catch {
+            print("none?")
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        dispFilesindoc()
         onTypeButton(0)
         // Setup Design Elements
         //        eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
@@ -204,73 +267,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         button.layer.cornerRadius = 5
         button.backgroundColor = color
     }
-//    func takeScreenShot1() -> UIImage {
-//        let size = CGSize(width: sceneViewRect!.width, height: sceneViewRect!.height)
-//        let capRect = sceneViewRect// CGRect(x:-capX,y:-sp,width:bW,height:bH)
-//        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-//        view.drawHierarchy(in:capRect!, afterScreenUpdates: true)
-//        let screenShotImage = UIGraphicsGetImageFromCurrentImageContext()!
-//        UIGraphicsEndImageContext()
-//        return screenShotImage
-//    }
-//    func takeScreenShot() -> UIImage {
-//        let width: CGFloat = UIScreen.main.bounds.size.width
-//        let height: CGFloat = UIScreen.main.bounds.size.height
-//        let size = CGSize(width: width, height: height)
-//
-//        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-//        view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
-//        let screenShotImage = UIGraphicsGetImageFromCurrentImageContext()!
-//        UIGraphicsEndImageContext()
-//
-//        return screenShotImage
-//    }
-//    var sceneViewRect:CGRect?
-    /*
-    func setButtons(){
-        let ww=view.bounds.width
-        let wh=view.bounds.height
-        let top:CGFloat=40//CGFloat(UserDefaults.standard.float(forKey: "top"))
-        let bottom:CGFloat=20//CGFloat( UserDefaults.standard.float(forKey: "bottom"))
-        let sp:CGFloat=5
-        let bw:CGFloat=(ww-10*sp)/7//最下段のボタンの高さ、幅と同じ
-        let bh=bw
-        let by0=wh-bottom-2*sp-bh
-//        let by1=by0-bh-sp//2段目
-        let by1=by0
-        let by2=by1-bh-sp//videoSlider
-        lookAtPositionXLabel.frame=CGRect(x:sp,y:top+sp,width:200,height: bh/2)
-        lookAtPositionYLabel.frame=CGRect(x:sp,y:top+sp+bh/2,width:200,height:bh/2)
-        distanceLabel.frame=CGRect(x:sp,y:top+sp*2+bh*2/2,width:200,height:bh/2)
-        setButtonProperty(listButton,x:sp*2.5+bw*0.5,y:by1,w:bw,h:bh,UIColor.white)
-        setButtonProperty(saveButton,x:sp*3.5+bw*1.5,y:by1,w:bw,h:bh,UIColor.white)
-        setButtonProperty(waveClearButton,x:sp*4.5+bw*2.5,y:by1,w:bw,h: bh,UIColor.white)
-        setButtonProperty(ARStartButton,x:sp*5.5+bw*3.5,y:by1,w:bw,h: bh,UIColor.white)
-        setButtonProperty(setteiButton,x:sp*6.5+bw*4.5,y:by1,w:bw,h: bh,UIColor.white)
-        setButtonProperty(how2Button,x:sp*7.5+bw*5.5,y:by1,w:bw,h: bh,UIColor.white)
-        let betw=(wh-top-bottom-ww*180/320-ww*2/5-bh)/4
-//        waveBoxView.frame=CGRect(x:0,y:wh*340/568-ww*90/320,width:ww,height: ww*180/320)
-//        vHITBoxView.frame=CGRect(x:0,y:wh*160/568-ww/5,width :ww,height:ww*2/5)
-        vHITBoxView.frame=CGRect(x:0,y:top+betw*2,width :ww,height:ww*2/5)
-        waveBoxView.frame=CGRect(x:0,y:vHITBoxView.frame.maxY+betw,width:ww,height: ww*180/320)
- 
-        sceneView.frame=CGRect(x:view.bounds.width/3,y:vHITBoxView.frame.minY-sp-view.bounds.width/4,width: view.bounds.width/3,height: view.bounds.width/4)
-        let y0=vHITBoxView.frame.maxY
-        let y1=waveBoxView.frame.minY
-        sceneCopyView.isHidden=true//いずれ顔imageが保存できる時がくれば出番があるであろう。
-//        sceneViewRect=sceneView.frame
-//        sceneCopyView.frame=CGRect(x:sceneView.frame.maxX+sp,y:sceneView.frame.minY,width: sceneView.frame.width,height:sceneView.frame.height)
-//
-        typeButton.frame=CGRect(x: sp*7.5+bw*5.5, y: y0+(y1-y0-bh)/2, width: bw, height: bh)
-        dataTypeLabel.frame=CGRect(x:sp*2.5+bw*0.5,y:y0+(y1-y0-bh)/2,width:400,height:bh)
- 
-        waveSlider.frame=CGRect(x:sp*2,y:by2,width: ww-sp*4,height:20)//とりあえず
-        let sliderHeight=waveSlider.frame.height
-        waveSlider.frame=CGRect(x:sp*2,y:(waveBoxView.frame.maxY+by1)/2-sliderHeight/2,width:ww-sp*4,height:sliderHeight)
     
-    }
-    
-    */
     func setButtons(){
         
         let ww=view.bounds.width
@@ -326,6 +323,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //            let Controller:SetteiViewController = vc
             multiEye=CGFloat(getUserDefault(str:"multiEye" , ret:100))
             multiFace=CGFloat(getUserDefault(str:"multiFace" , ret:100))
+            dataType += -1
+            onTypeButton(0)
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -366,6 +365,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             eyeLNode.simdTransform = anchor.leftEyeTransform
             faceNode.simdTransform = anchor.transform
             DispatchQueue.main.async {
+                let faceAngles = anchor.transform.eulerAngles
+                let eyeRAngles = anchor.rightEyeTransform.eulerAngles
+                let eyeLAngles = anchor.leftEyeTransform.eulerAngles
+                let fYaw = faceAngles.x
+                let fPitch = faceAngles.y
+                let fRoll = faceAngles.z
+                let eYaw = (eyeLAngles.x + eyeRAngles.x)/2
+                let ePitch = (eyeLAngles.y + eyeRAngles.y)/2
+                let eRoll = (eyeLAngles.z + eyeRAngles.z)/2
+                
+                if self.dataType==0{
+                    self.updateData(eye:CGFloat(eRoll),face:CGFloat(fRoll))
+                }else if self.dataType==1{
+                    self.updateData(eye:CGFloat(ePitch),face:CGFloat(fPitch))
+                }else if self.dataType>=2{
+                    self.updateData(eye:CGFloat(eYaw),face:CGFloat(fYaw))
+                }
+            }
+        }
+    }
+    /*
+    func update(withFaceAnchor anchor: ARFaceAnchor) {
+        if arKitFlag==true{
+            eyeRNode.simdTransform = anchor.rightEyeTransform
+            eyeLNode.simdTransform = anchor.leftEyeTransform
+            faceNode.simdTransform = anchor.transform
+            DispatchQueue.main.async {
                 let face = simd_quatf(anchor.transform)
                 let rEye = simd_quatf(anchor.rightEyeTransform)
                 let lEye = simd_quatf(anchor.leftEyeTransform)
@@ -396,85 +422,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     self.updateData(eye:CGFloat(ePitch),face:CGFloat(fPitch))
                 }else if self.dataType>=2{
                     self.updateData(eye:CGFloat(eYaw),face:CGFloat(fYaw))
-//                }else if self.dataType==3{
-//                    self.updateData(eye:CGFloat(eRoll),face:CGFloat(eYaw))
-//                }else if self.dataType==4{
-//                    self.updateData(eye:CGFloat(eRoll),face:CGFloat(eYaw))
-//                }else if self.dataType>4{
-//                    self.updateData(eye:CGFloat(eRoll),face:CGFloat(eYaw))
-               }
+                }
             }
         }
-    }
- /*
-    func update(withFaceAnchor anchor: ARFaceAnchor) {//original
-        if arKitFlag==true{
-            eyeRNode.simdTransform = anchor.rightEyeTransform
-            eyeLNode.simdTransform = anchor.leftEyeTransform
-            faceNode.simdTransform = anchor.transform
-            //----------------
-            //            let temp = SCNNode(geometry: nil)
-            //            temp.simdTransform = anchor.leftEyeTransform
-            //ちゃんと1/60sec毎に通っている
-            //        print("leftEye:",CFAbsoluteTimeGetCurrent()-currTime,temp.rotation.x)// temp.rotation.y,temp.rotation.z)
-            //----------------------
-            var eyeLLookAt = CGPoint()
-            var eyeRLookAt = CGPoint()
-            let heightCompensation: CGFloat = 312
-            DispatchQueue.main.async {
-                // Perform Hit test using the ray segments that are drawn by the center of the eyeballs to somewhere two meters away at direction of where users look at to the virtual plane that place at the same orientation of the phone screen
-                let phoneScreenEyeRHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeRNode.worldPosition, to: self.eyeRNode.worldPosition, options: nil)
-                
-                let phoneScreenEyeLHitTestResults = self.virtualPhoneNode.hitTestWithSegment(from: self.lookAtTargetEyeLNode.worldPosition, to: self.eyeLNode.worldPosition, options: nil)
-                
-                for result in phoneScreenEyeRHitTestResults {
-                    
-                    eyeRLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                    
-                    eyeRLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
-                }
-                
-                for result in phoneScreenEyeLHitTestResults {
-                    
-                    eyeLLookAt.x = CGFloat(result.localCoordinates.x) / (self.phoneScreenSize.width / 2) * self.phoneScreenPointSize.width
-                    
-                    eyeLLookAt.y = CGFloat(result.localCoordinates.y) / (self.phoneScreenSize.height / 2) * self.phoneScreenPointSize.height + heightCompensation
-                }
-                
-                // Add the latest position and keep up to 8 recent position to smooth with.
-                let smoothThresholdNumber: Int = 10
-                self.eyeLookAtPositionXs.append((eyeRLookAt.x + eyeLLookAt.x) / 2)
-                self.eyeLookAtPositionYs.append(-(eyeRLookAt.y + eyeLLookAt.y) / 2)
-                self.eyeLookAtPositionXs = Array(self.eyeLookAtPositionXs.suffix(smoothThresholdNumber))
-                self.eyeLookAtPositionYs = Array(self.eyeLookAtPositionYs.suffix(smoothThresholdNumber))
-                
-                let smoothEyeLookAtPositionX = self.eyeLookAtPositionXs.average!
-                let smoothEyeLookAtPositionY = self.eyeLookAtPositionYs.average!
-                
-                // update indicator position
-                //            self.eyePositionIndicatorView.transform = CGAffineTransform(translationX: smoothEyeLookAtPositionX, y: smoothEyeLookAtPositionY)
-                
-                // update eye look at labels values
-                self.lookAtPositionXLabel.text = "\(Int(round(smoothEyeLookAtPositionX + self.phoneScreenPointSize.width / 2)))"
-                
-                self.lookAtPositionYLabel.text = "\(Int(round(smoothEyeLookAtPositionY + self.phoneScreenPointSize.height / 2)))"
-                
-                // Calculate distance of the eyes to the camera
-                let distanceL = self.eyeLNode.worldPosition - SCNVector3Zero
-                let distanceR = self.eyeRNode.worldPosition - SCNVector3Zero
-                
-                // Average distance from two eyes
-                let distance = (distanceL.length() + distanceR.length()) / 2
-                
-                // Update distance label value
-                self.distanceLabel.text = "\(Int(round(distance * 100))) cm"
-                print("leftEye:",CFAbsoluteTimeGetCurrent()-self.currTime)
-                self.updateData(eye:smoothEyeLookAtPositionX,face:smoothEyeLookAtPositionY)
-            }
-        }
-    }
- */
-    
+    }*/
+   
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if arKitFlag{
             virtualPhoneNode.transform = (sceneView.pointOfView?.transform)!
@@ -705,7 +657,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         df.dateFormat = "yyyy-MM-dd HH:mm:ss"// 2019-10-19 17:01:09
         var eyeCurrent=eye
         var faceCurrent=face
-        if dataType>2{
+        if !getUserDefaultBool(str: "angle4Debug", ret:false){
             eyeCurrent = eye - lastEye
             faceCurrent = face - lastFace
         }
@@ -865,6 +817,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let drawPathFace = UIBezierPath()
         var rightCnt:Int=0
         var leftCnt:Int=0
+        print("vhitsCount******:",vHITs.count)
         for i in 0..<vHITs.count{
             pointListEye.removeAll()
             pointListFace.removeAll()
@@ -991,14 +944,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         UIGraphicsEndImageContext()
         return image!
     }
-    var path2albumDoneFlag:Bool=false//不必要かもしれないが念の為
-    func savePath2album(path:String){
-        path2albumDoneFlag=false
-        savePath2album_sub(path: path)
-        while path2albumDoneFlag == false{
-            sleep(UInt32(0.2))
-        }
-    }
+
     func getPHAssetcollection()->PHAssetCollection{
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = true
@@ -1006,68 +952,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         requestOptions.deliveryMode = .highQualityFormat //これでもicloud上のvideoを取ってしまう
         //アルバムをフェッチ
         let assetFetchOptions = PHFetchOptions()
-        assetFetchOptions.predicate = NSPredicate(format: "title == %@", defaultAlbumName)
+        assetFetchOptions.predicate = NSPredicate(format: "title == %@", "ARKitHIT")
         let assetCollections = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .smartAlbumVideos, options: assetFetchOptions)
         //アルバムはviewdidloadで作っているのであるはず？
-        //        if (assetCollections.count > 0) {
+//        if (assetCollections.count > 0) {
         //同じ名前のアルバムは一つしかないはずなので最初のオブジェクトを使用
         return assetCollections.object(at:0)
     }
-    func savePath2album_sub(path:String){
-        
-        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
-            
-            let fileURL = dir.appendingPathComponent( path )
-            
-            PHPhotoLibrary.shared().performChanges({ [self] in
-                let assetRequest = PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: fileURL)!
-                let albumChangeRequest = PHAssetCollectionChangeRequest(for:  getPHAssetcollection())
-                let placeHolder = assetRequest.placeholderForCreatedAsset
-                albumChangeRequest?.addAssets([placeHolder!] as NSArray)
-            }) { (isSuccess, error) in
-                if isSuccess {
-                    self.path2albumDoneFlag=true
-                    // 保存成功
-                } else {
-                    self.path2albumDoneFlag=true
-                    // 保存失敗
-                }
-            }
-        }
-    }
-    
-    func saveImage2path(image:UIImage,path:String) {//imageを保存
-        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
-            let path_url = dir.appendingPathComponent( path )
-            let pngImageData = image.pngData()
-            do {
-                try pngImageData!.write(to: path_url, options: .atomic)
-                //                saving2pathFlag=false
-            } catch {
-                print("write err")//エラー処理
-            }
-        }
-    }
-    
-    func existFile(aFile:String)->Bool{
-        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
-            
-            let path_url = dir.appendingPathComponent( aFile )
-            let fileManager = FileManager.default
-            if fileManager.fileExists(atPath: path_url.path){
-                return true
-            }else{
-                return false
-            }
-            
-        }
-        return false
-    }
+ 
     @IBAction func onSaveButton(_ sender: Any) {
-        print("onsaveButton")
-        if waves.count<1{
-            return
-        }
+//        if vHITs.count<1{
+//            return
+//        }
         
         let alert = UIAlertController(title: "input ID", message: "", preferredStyle: .alert)
         let saveAction = UIAlertAction(title: "OK", style: .default) { [self] (action:UIAlertAction!) -> Void in
@@ -1102,6 +998,69 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         alert.addAction(saveAction)
         present(alert, animated: true, completion: nil)
     }
+    
+    var path2albumDoneFlag:Bool=false//不必要かもしれないが念の為
+    func savePath2album(path:String){
+        path2albumDoneFlag=false
+        savePath2album_sub(path: path)
+        while path2albumDoneFlag == false{
+            sleep(UInt32(0.2))
+        }
+    }
+    
+    func savePath2album_sub(path:String){
+        
+        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+            
+            let fileURL = dir.appendingPathComponent( path )
+            DispatchQueue.main.async{}
+            
+            PHPhotoLibrary.shared().performChanges({ [self] in
+                let assetRequest = PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: fileURL)!
+                let albumChangeRequest = PHAssetCollectionChangeRequest(for: getPHAssetcollection())
+                let placeHolder = assetRequest.placeholderForCreatedAsset
+                albumChangeRequest?.addAssets([placeHolder!] as NSArray)
+            }) { (isSuccess, error) in
+                if isSuccess {
+                    self.path2albumDoneFlag=true
+                    // 保存成功
+                } else {
+                    self.path2albumDoneFlag=true
+                    // 保存失敗
+                }
+            }
+            
+        }
+    }
+    
+    func saveImage2path(image:UIImage,path:String) {//imageを保存
+        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+            let path_url = dir.appendingPathComponent( path )
+            let pngImageData = image.pngData()
+            do {
+                try pngImageData!.write(to: path_url, options: .atomic)
+                //                saving2pathFlag=false
+            } catch {
+                print("write err")//エラー処理
+            }
+        }
+    }
+    
+    func existFile(aFile:String)->Bool{
+        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+            
+            let path_url = dir.appendingPathComponent( aFile )
+            let fileManager = FileManager.default
+            if fileManager.fileExists(atPath: path_url.path){
+                return true
+            }else{
+                return false
+            }
+            
+        }
+        return false
+    }
+    
     @IBAction func onWaveClearButton(_ sender: Any) {
         if waves.count>59{
             waves.removeAll()
@@ -1282,22 +1241,4 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
  
     }
 }
-    /*
-  
  
- 
-     override var shouldAutorotate: Bool {
-         return false
-     }
-     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-         return .portrait
-     }
-     
-     override func viewDidAppear(_ animated: Bool) {
-         super.viewDidAppear(animated)
-                 let configuration = ARFaceTrackingConfiguration()
-                 configuration.isLightEstimationEnabled = true
-                 session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-     }
-     */
-
