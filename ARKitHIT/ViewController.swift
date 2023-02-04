@@ -21,6 +21,55 @@ extension UIImage {
         return resizedImage
     }
 }
+
+extension matrix_float4x4 {
+    // Function to convert rad to deg
+    func radiansToDegress(radians: Float32) -> Float32 {
+        return radians * 180 / (Float32.pi)
+    }
+    var translation: SCNVector3 {
+       get {
+           return SCNVector3Make(columns.3.x, columns.3.y, columns.3.z)
+       }
+    }
+    // Retrieve euler angles from a quaternion matrix
+    var eulerAngles: SCNVector3 {
+        get {
+            // Get quaternions
+            let qw = sqrt(1 + self.columns.0.x + self.columns.1.y + self.columns.2.z) / 2.0
+            let qx = (self.columns.2.y - self.columns.1.z) / (qw * 4.0)
+            let qy = (self.columns.0.z - self.columns.2.x) / (qw * 4.0)
+            let qz = (self.columns.1.x - self.columns.0.y) / (qw * 4.0)
+
+            // Deduce euler angles
+            /// yaw (z-axis rotation)
+            let siny = +2.0 * (qw * qz + qx * qy)
+            let cosy = +1.0 - 2.0 * (qy * qy + qz * qz)
+//            let yaw = radiansToDegress(radians:atan2(siny, cosy))
+            let yaw = atan2(siny, cosy)
+            // pitch (y-axis rotation)
+            let sinp = +2.0 * (qw * qy - qz * qx)
+            var pitch: Float
+            if abs(sinp) >= 1 {
+//                pitch = radiansToDegress(radians:copysign(Float.pi / 2, sinp))
+                pitch = copysign(Float.pi / 2, sinp)
+            } else {
+//                pitch = radiansToDegress(radians:asin(sinp))
+                pitch = asin(sinp)
+            }
+            /// roll (x-axis rotation)
+            let sinr = +2.0 * (qw * qx + qy * qz)
+            let cosr = +1.0 - 2.0 * (qx * qx + qy * qy)
+//            let roll = radiansToDegress(radians:atan2(sinr, cosr))
+            let roll = atan2(sinr, cosr)
+            
+            /// return array containing ypr values
+            return SCNVector3(yaw, pitch, roll)
+            }
+    }
+}
+
+
 @available(iOS 13.0, *)
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var typeButton: UIButton!
@@ -366,30 +415,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             eyeLNode.simdTransform = anchor.leftEyeTransform
             faceNode.simdTransform = anchor.transform
             DispatchQueue.main.async {
-                let face = simd_quatf(anchor.transform)
-                let rEye = simd_quatf(anchor.rightEyeTransform)
-                let lEye = simd_quatf(anchor.leftEyeTransform)
-                let fRoll = atan2f(2.0 * (face.axis.z * face.angle + face.axis.x * face.axis.y),
-                                   face.axis.x * face.axis.x - face.axis.y * face.axis.y - face.axis.z * face.axis.z + face.angle * face.angle)
-                let fPitch = asin(2.0 * (face.axis.x * face.axis.z - face.axis.y * face.angle))
-                let fYaw = atan2f(2.0 * (face.axis.y * face.axis.z + face.axis.x * face.angle),
-                                  face.axis.x*face.axis.x + face.axis.y * face.axis.y - face.axis.z * face.axis.z - face.angle * face.angle)
+                let faceAngles = anchor.transform.eulerAngles
+                let eyeRAngles = anchor.rightEyeTransform.eulerAngles
+                let eyeLAngles = anchor.leftEyeTransform.eulerAngles
+                let fYaw = faceAngles.x
+                let fPitch = faceAngles.y
+                let fRoll = faceAngles.z
+                let eYaw = (eyeLAngles.x + eyeRAngles.x)/2
+                let ePitch = (eyeLAngles.y + eyeRAngles.y)/2
+                let eRoll = (eyeLAngles.z + eyeRAngles.z)/2
                 
-                let rRoll = atan2f(2.0 * (rEye.axis.z * rEye.angle + rEye.axis.x * rEye.axis.y),
-                                   rEye.axis.x * rEye.axis.x - rEye.axis.y * rEye.axis.y - rEye.axis.z * rEye.axis.z + rEye.angle * rEye.angle)
-                let rPitch = asin(2.0 * (rEye.axis.x * rEye.axis.z - rEye.axis.y * rEye.angle))
-                let rYaw = atan2f(2.0 * (rEye.axis.y * rEye.axis.z + rEye.axis.x * rEye.angle),
-                                  rEye.axis.x*rEye.axis.x + rEye.axis.y * rEye.axis.y - rEye.axis.z * rEye.axis.z - rEye.angle * rEye.angle)
-                
-                let lRoll = atan2f(2.0 * (lEye.axis.z * lEye.angle + lEye.axis.x * lEye.axis.y),
-                                   lEye.axis.x * lEye.axis.x - lEye.axis.y * lEye.axis.y - lEye.axis.z * lEye.axis.z + lEye.angle * lEye.angle)
-                let lPitch = asin(2.0 * (lEye.axis.x * lEye.axis.z - lEye.axis.y * lEye.angle))
-                let lYaw = atan2f(2.0 * (lEye.axis.y * lEye.axis.z + lEye.axis.x * lEye.angle),
-                                  lEye.axis.x*lEye.axis.x + lEye.axis.y * lEye.axis.y - lEye.axis.z * lEye.axis.z - lEye.angle * lEye.angle)
-
-                let eRoll = (rRoll + lRoll)/2
-                let ePitch = (rPitch + lPitch)/2
-                let eYaw = (rYaw + lYaw)/2
                 if self.dataType==0{
                     self.updateData(eye:CGFloat(eRoll),face:CGFloat(fRoll))
                 }else if self.dataType==1{
