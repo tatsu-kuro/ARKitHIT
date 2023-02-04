@@ -230,7 +230,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         dispFilesindoc()
-        onTypeButton(0)
+        UserDefaults.standard.set(false, forKey:"angle4Debug")//初期値anglar velocity
+        onTypeButton(0)//初期値pitch
         // Setup Design Elements
         //        eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
         
