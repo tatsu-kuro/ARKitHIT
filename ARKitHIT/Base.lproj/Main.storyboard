@@ -107,6 +107,20 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NNx-H4-ZkI">
+                                <rect key="frame" x="60" y="304" width="49" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="onValue4Debug:" destination="mCY-ts-XwF" eventType="valueChanged" id="6gW-UV-q0Z"/>
+                                </connections>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="values( for debug)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A7b-od-fxl">
+                                <rect key="frame" x="166" y="309" width="140" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Xxh-Zx-Kbl"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -123,6 +137,8 @@
                         <outlet property="multiFaceText" destination="C9n-57-TgU" id="3qh-Zz-30d"/>
                         <outlet property="vHITDisplayText" destination="xL4-n9-c5O" id="Sod-pD-7fq"/>
                         <outlet property="vHITDisplayType" destination="AHu-1p-SFD" id="smR-dH-wvC"/>
+                        <outlet property="value4DebugSwitch" destination="NNx-H4-ZkI" id="eIL-1H-MCm"/>
+                        <outlet property="value4DebugText" destination="A7b-od-fxl" id="GHH-Rv-Dug"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EBQ-N0-6iC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -818,7 +818,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let drawPathFace = UIBezierPath()
         var rightCnt:Int=0
         var leftCnt:Int=0
-        print("vhitsCount******:",vHITs.count)
+//        print("vhitsCount******:",vHITs.count)
         for i in 0..<vHITs.count{
             pointListEye.removeAll()
             pointListFace.removeAll()

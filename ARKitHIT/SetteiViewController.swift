@@ -9,6 +9,8 @@ import UIKit
 class SetteiViewController: UIViewController {
     @IBOutlet weak var defaultButton: UIButton!
     
+    @IBOutlet weak var value4DebugText: UILabel!
+    @IBOutlet weak var value4DebugSwitch: UISwitch!
     @IBOutlet weak var angle4DebugText: UILabel!
     @IBOutlet weak var angle4DebugSwitch: UISwitch!
     @IBOutlet weak var vHITDisplayText: UILabel!
@@ -19,6 +21,8 @@ class SetteiViewController: UIViewController {
     @IBOutlet weak var multiFaceText: UILabel!
     @IBOutlet weak var exitButton: UIButton!
     
+    @IBAction func onValue4Debug(_ sender: UISwitch) {
+    }
     @IBAction func onAngle4Debug(_ sender: UISwitch) {
         if sender.isOn{
             UserDefaults.standard.set(true, forKey:"angle4Debug")
