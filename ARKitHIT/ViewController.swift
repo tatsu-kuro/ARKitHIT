@@ -100,7 +100,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var dataType:Int=0//初期値は１となる。１->pitch
     @IBAction func onTypeButton(_ sender: Any) {
         dataType += 1
-        if dataType>2{
+        if dataType>1{
             dataType=0
         }
         var text1="gray: head anglar velocity "
@@ -112,7 +112,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if dataType==0{
             dataTypeLabel.text=text1 + "/Roll\n" + text2 + "/Roll"
         }else if dataType==1{
-            dataTypeLabel.text=text1 + "\n" + text2//"/Pitch\n" + text2 + "/Pitch"
+            dataTypeLabel.text=text1 + "/Pitch\n" + text2 + "/Pitch"
         }else{
             dataTypeLabel.text=text1 + "/Yaw\n" + text2 + "/Yaw"
         }
