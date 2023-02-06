@@ -22,6 +22,11 @@ class SetteiViewController: UIViewController {
     @IBOutlet weak var exitButton: UIButton!
     
     @IBAction func onValue4Debug(_ sender: UISwitch) {
+        if sender.isOn{
+            UserDefaults.standard.set(true, forKey:"value4Debug")
+        }else{
+            UserDefaults.standard.set(false, forKey:"value4Debug")
+        }
     }
     @IBAction func onAngle4Debug(_ sender: UISwitch) {
         if sender.isOn{
@@ -163,6 +168,8 @@ class SetteiViewController: UIViewController {
         vHITDisplayText.frame=CGRect(x:vHITDisplayType.frame.maxX+sp,y:by0+sp*2+cntH*2,width:300,height:cntH)
         angle4DebugSwitch.frame=CGRect(x:sp*2.5+bw*0.5,y:by0+sp*3+cntH*3,width: vHITDisplayType.frame.width,height: cntH)
         angle4DebugText.frame=CGRect(x:angle4DebugSwitch.frame.maxX+sp,y:by0+sp*3+cntH*3,width:300,height:cntH)
+        value4DebugSwitch.frame=CGRect(x:sp*2.5+bw*0.5,y:by0+sp*4+cntH*4,width: vHITDisplayType.frame.width,height: cntH)
+        value4DebugText.frame=CGRect(x:value4DebugSwitch.frame.maxX+sp,y:by0+sp*4+cntH*4,width:300,height:cntH)
         defaultButton.frame=CGRect(x:sp*2.5+bw*0.5,y:by1,width: bw,height: bh)
         defaultButton.layer.cornerRadius=5
         exitButton.frame=CGRect(x:sp*7.5+bw*5.5,y:by1,width: bw,height: bh)
@@ -176,6 +183,11 @@ class SetteiViewController: UIViewController {
             angle4DebugSwitch.isOn=true
         }else{
             angle4DebugSwitch.isOn=false
+        }
+        if getUserDefaultBool(str: "value4Debug", ret:false){
+            value4DebugSwitch.isOn=true
+        }else{
+            value4DebugSwitch.isOn=false
         }
     }
     

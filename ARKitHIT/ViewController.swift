@@ -230,7 +230,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         dispFilesindoc()
-        UserDefaults.standard.set(false, forKey:"angle4Debug")//初期値anglar velocity
+        UserDefaults.standard.set(false, forKey:"angle4Debug")//初期値false anglar velocity
+        UserDefaults.standard.set(false, forKey:"value4Debug")//初期値false
         onTypeButton(0)//初期値pitch
         // Setup Design Elements
         //        eyePositionIndicatorView.layer.cornerRadius = eyePositionIndicatorView.bounds.width / 2
@@ -570,25 +571,34 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             UIColor.red.setStroke()
             drawPath2.stroke()
             var text=waves[endCnt-1].date
-            var text2:String=""
+            var text2:String="head:"
+            var text3:String="eye:"
             if arKitFlag==false && endCnt<waves.count-15 && endCnt>60{
                 text += "  n:" + endCnt.description + " head:" + getDoubleString(-waves[endCnt-1].face*10000)
-//               text += "  n:" + endCnt.description + " head:" + (floor(-waves[endCnt-1].face*10000)).description
-
-#if DEBUG
-                text2 += getDoubleString(-waves[endCnt-1].face*10000) + ","
-                text2 += getDoubleString(-waves[endCnt].face*10000) + ","
-                text2 += getDoubleString(-waves[endCnt+1].face*10000) + ","
-                text2 += getDoubleString(-waves[endCnt+2].face*10000) + ","
-                text2 += getDoubleString(-waves[endCnt+3].face*10000) + ","
-                text2 += getDoubleString(-waves[endCnt+4].face*10000) + ","
-                text2 += getDoubleString(-waves[endCnt+5].face*10000) + ","
-                text2 += getDoubleString(-waves[endCnt+6].face*10000) + ","
-                text2.draw(at:CGPoint(x:3,y:3+20),withAttributes: [
-                    NSAttributedString.Key.foregroundColor : UIColor.black,
-                    NSAttributedString.Key.font : UIFont.monospacedDigitSystemFont(ofSize: 13, weight: UIFont.Weight.regular)])
-#endif
-                
+                if getUserDefaultBool(str: "value4Debug", ret:false){
+                    text2 += getDoubleString(-waves[endCnt-1].face*10000) + ","
+                    text2 += getDoubleString(-waves[endCnt].face*10000) + ","
+                    text2 += getDoubleString(-waves[endCnt+1].face*10000) + ","
+                    text2 += getDoubleString(-waves[endCnt+2].face*10000) + ","
+                    text2 += getDoubleString(-waves[endCnt+3].face*10000) + ","
+                    text2 += getDoubleString(-waves[endCnt+4].face*10000) + ","
+                    text2 += getDoubleString(-waves[endCnt+5].face*10000) + ","
+                    text2 += getDoubleString(-waves[endCnt+6].face*10000) + ","
+                    text2.draw(at:CGPoint(x:3,y:3+20),withAttributes: [
+                        NSAttributedString.Key.foregroundColor : UIColor.black,
+                        NSAttributedString.Key.font : UIFont.monospacedDigitSystemFont(ofSize: 13, weight: UIFont.Weight.regular)])
+                    text3 += getDoubleString(-waves[endCnt-1].eye*10000) + ","
+                    text3 += getDoubleString(-waves[endCnt].eye*10000) + ","
+                    text3 += getDoubleString(-waves[endCnt+1].eye*10000) + ","
+                    text3 += getDoubleString(-waves[endCnt+2].eye*10000) + ","
+                    text3 += getDoubleString(-waves[endCnt+3].eye*10000) + ","
+                    text3 += getDoubleString(-waves[endCnt+4].eye*10000) + ","
+                    text3 += getDoubleString(-waves[endCnt+5].eye*10000) + ","
+                    text3 += getDoubleString(-waves[endCnt+6].eye*10000) + ","
+                    text3.draw(at:CGPoint(x:3,y:3+40),withAttributes: [
+                        NSAttributedString.Key.foregroundColor : UIColor.black,
+                        NSAttributedString.Key.font : UIFont.monospacedDigitSystemFont(ofSize: 13, weight: UIFont.Weight.regular)])
+                }
             }
             text.draw(at:CGPoint(x:3,y:3),withAttributes: [
                 NSAttributedString.Key.foregroundColor : UIColor.black,
