@@ -91,7 +91,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var distanceLabel: UILabel!
     //    @IBOutlet weak var sceneCopyView: UIImageView!
     @IBOutlet weak var waveSlider: UISlider!
-    var defaultAlbumName:String = "ARvHIT"
+    var albumName:String = "ARKitHIT"
     @IBOutlet weak var dataTypeLabel: UILabel!
     var multiEye:CGFloat=100
     var multiFace:CGFloat=100
@@ -214,22 +214,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             return ret
         }
     }
-    func dispFilesindoc(){
-        let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        do {
-            let contentUrls = try FileManager.default.contentsOfDirectory(at: documentDirectoryURL, includingPropertiesForKeys: nil)
-            let files = contentUrls.map{$0.lastPathComponent}
-            
-            for i in 0..<files.count{
-                print(files[i])
-            }
-        } catch {
-            print("none?")
-        }
-    }
+//    func dispFilesindoc(){
+//        let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+//        do {
+//            let contentUrls = try FileManager.default.contentsOfDirectory(at: documentDirectoryURL, includingPropertiesForKeys: nil)
+//            let files = contentUrls.map{$0.lastPathComponent}
+//
+//            for i in 0..<files.count{
+//                print(files[i])
+//            }
+//        } catch {
+//            print("none?")
+//        }
+//    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        dispFilesindoc()
+        //dispFilesindoc()
+        makeAlbum()
         UserDefaults.standard.set(false, forKey:"angle4Debug")//初期値false anglar velocity
         UserDefaults.standard.set(false, forKey:"value4Debug")//初期値false
         onTypeButton(0)//初期値pitch
@@ -963,14 +964,64 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         requestOptions.deliveryMode = .highQualityFormat //これでもicloud上のvideoを取ってしまう
         //アルバムをフェッチ
         let assetFetchOptions = PHFetchOptions()
-        assetFetchOptions.predicate = NSPredicate(format: "title == %@", "ARKitHIT")
+        assetFetchOptions.predicate = NSPredicate(format: "title == %@", albumName)
         let assetCollections = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .smartAlbumVideos, options: assetFetchOptions)
         //アルバムはviewdidloadで作っているのであるはず？
 //        if (assetCollections.count > 0) {
         //同じ名前のアルバムは一つしかないはずなので最初のオブジェクトを使用
         return assetCollections.object(at:0)
     }
- 
+//    private func saveImage(_ image: UIImage) {
+//        PHPhotoLibrary.shared().performChanges({
+//            PHAssetChangeRequest.creationRequestForAsset(from: image)
+//        }) { [weak self] (success, error) in
+//            DispatchQueue.main.async {
+//                if let error = error {
+//                    // エラーのアラート表示
+//                } else {
+//                    // 保存完了のアラート表示
+//                }
+//            }
+//        }
+//    }
+  
+    func albumExists() -> Bool {
+        // ここで以下のようなエラーが出るが、なぜか問題なくアルバムが取得できている
+        let albums = PHAssetCollection.fetchAssetCollections(with: PHAssetCollectionType.album, subtype:
+            PHAssetCollectionSubtype.albumRegular, options: nil)
+        for i in 0 ..< albums.count {
+            let album = albums.object(at: i)
+            if album.localizedTitle != nil && album.localizedTitle == albumName {
+                return true
+            }
+        }
+        return false
+    }
+    //何も返していないが、ここで見つけたor作成したalbumを返したい。そうすればグローバル変数にアクセスせずに済む
+    func createNewAlbum( callback: @escaping (Bool) -> Void) {
+        if self.albumExists() {
+            callback(true)
+        } else {
+            PHPhotoLibrary.shared().performChanges({ [self] in
+                _ = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: albumName)
+            }) { (isSuccess, error) in
+                callback(isSuccess)
+            }
+        }
+    }
+    func makeAlbum(){
+        if albumExists()==false{
+            createNewAlbum() { [self] (isSuccess) in
+                if isSuccess{
+                    print(albumName," can be made,")
+                } else{
+                    print(albumName," can't be made.")
+                }
+            }
+        }else{
+            print(albumName," exist already.")
+        }
+    }
     @IBAction func onSaveButton(_ sender: Any) {
 //        if vHITs.count<1{
 //            return
@@ -981,15 +1032,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             // 入力したテキストをコンソールに表示
             let textField = alert.textFields![0] as UITextField
-#if DEBUG
-            print("\(String(describing: textField.text))")
-#endif
+
             self.idString = textField.text!// Field2value(field: textField)
             
             //            let textField = alert.textFields![0] as UITextField
             //            idString = textField.text!
             let drawImage = drawVHIT(width:500*4,height:200*4)
-            //まずtemp.pngに保存して、それをvHIT_VOGアルバムにコピーする
+             //まずtemp.pngに保存して、それをvHIT_VOGアルバムにコピーする
             saveImage2path(image: drawImage, path: "temp.jpeg")
             while existFile(aFile: "temp.jpeg") == false{
                 sleep(UInt32(0.1))
