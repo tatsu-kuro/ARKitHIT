@@ -72,6 +72,10 @@ class SetteiViewController: UIViewController {
         multiFace.text="100"
         UserDefaults.standard.set(100, forKey: "multiEye")
         UserDefaults.standard.set(100, forKey: "multiFace")
+        UserDefaults.standard.set(false, forKey:"value4Debug")
+        value4DebugSwitch.isOn=false
+        UserDefaults.standard.set(false, forKey:"angle4Debug")
+        angle4DebugSwitch.isOn=false
     }
     
     @IBAction func onTapGestureEye(_ sender: Any) {

@@ -64,13 +64,13 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5jb-fE-JbA">
-                                <rect key="frame" x="83" y="636" width="26" height="26"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5jb-fE-JbA">
+                                <rect key="frame" x="84" y="639" width="26" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemGray3Color"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="arrow.uturn.backward.circle" catalog="system"/>
+                                <state key="normal" image="eraser.line.dashed" catalog="system"/>
                                 <connections>
                                     <action selector="onDefaultButton:" destination="mCY-ts-XwF" eventType="touchUpInside" id="mAm-Dt-Avh"/>
                                 </connections>
@@ -114,8 +114,8 @@
                                     <action selector="onValue4Debug:" destination="mCY-ts-XwF" eventType="valueChanged" id="6gW-UV-q0Z"/>
                                 </connections>
                             </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="values( for debug)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A7b-od-fxl">
-                                <rect key="frame" x="166" y="309" width="140" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="show values( for debug)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A7b-od-fxl">
+                                <rect key="frame" x="166" y="309" width="184" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -402,7 +402,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="arrow.uturn.backward.circle" catalog="system" width="128" height="123"/>
+        <image name="eraser.line.dashed" catalog="system" width="128" height="96"/>
         <image name="folder.circle" catalog="system" width="128" height="123"/>
         <image name="gearshape.circle" catalog="system" width="128" height="123"/>
         <image name="list.bullet.circle" catalog="system" width="128" height="123"/>
