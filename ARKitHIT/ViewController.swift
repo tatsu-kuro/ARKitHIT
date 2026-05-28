@@ -4,7 +4,7 @@
 import SceneKit
 import UIKit
 import AVFoundation
-import AssetsLibrary
+//import AssetsLibrary
 import Photos
 import MessageUI
 import ARKit
@@ -322,8 +322,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
     }
     @IBAction func unwind(_ segue: UIStoryboardSegue) {
-        if let vc = segue.source as? SetteiViewController{
-//            let Controller:SetteiViewController = vc
+        if segue.source is SetteiViewController{
             multiEye=CGFloat(getUserDefault(str:"multiEye" , ret:100))
             multiFace=CGFloat(getUserDefault(str:"multiFace" , ret:100))
             dataType += -1

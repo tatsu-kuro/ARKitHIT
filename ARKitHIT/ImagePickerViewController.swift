@@ -4,7 +4,7 @@
 
 import UIKit
 import Photos
-import AssetsLibrary
+//import AssetsLibrary
 import MessageUI
 class ImagePickerViewController: UIViewController, MFMailComposeViewControllerDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate{
 
